@@ -1,8 +1,8 @@
-from drf_writable_nested.serializers import WritableNestedModelSerializer
+from rest_framework import serializers
 from memo.models.room import Room
 
 
-class RoomSerializer(WritableNestedModelSerializer):
+class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
-        fields = ['id', 'name', 'created_at', 'updated_at']
+        fields = "__all__"
