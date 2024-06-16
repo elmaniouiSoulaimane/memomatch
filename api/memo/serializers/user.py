@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from memo.models.user import User
+from api.memo.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
