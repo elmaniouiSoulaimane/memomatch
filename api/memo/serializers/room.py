@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.memo.models.room import Room
+from ..models.room import Room
 
 
 class RoomSerializer(serializers.ModelSerializer):
