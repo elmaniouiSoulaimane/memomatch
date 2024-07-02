@@ -35,7 +35,13 @@ class RoomDetailsStep extends React.Component {
   handleClick = () => {
 
     if (this.state.roomName !== '' && this.state.errorMessage === ''){
-      const ws = new WebSocket(`ws://127.0.0.1:8000/ws/memomatch/${this.state.roomName}/?action=create`);
+      let ws = null
+      if (this.props.isRoomAdmin) {
+        ws = new WebSocket(`ws://127.0.0.1:8000/ws/memomatch/${this.state.roomName}/?action=create`);
+      }else{
+        ws = new WebSocket(`ws://127.0.0.1:8000/ws/memomatch/${this.state.roomName}/?action=join`);
+      }
+      
       
       ws.onopen = () => {
         this.setState({ wsConnected: true }, () => {
