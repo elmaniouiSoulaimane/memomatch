@@ -108,6 +108,8 @@ class UserDetailsStep extends React.Component {
 
         const update = "Player " + current_player.user_name + " has joined the room."
 
+        this.props.setMainPlayer(current_player);
+
         this.props.ws.send(
           JSON.stringify(
             { 
@@ -117,8 +119,6 @@ class UserDetailsStep extends React.Component {
             }
           )
         );
-
-        this.props.setMainPlayer(current_player);
       }
       
       this.props.nextStep();
