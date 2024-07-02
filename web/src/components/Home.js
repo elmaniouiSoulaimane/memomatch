@@ -31,6 +31,7 @@ class Home extends React.Component {
 
     //GAME EVENTS HANDLERS
     handlePlayerJoined = (message, players, mainPlayer, news) => {
+        console.log("in handlePlayerJoined")
         const player = message.player
 
         const playerExists = players.some(existingPlayer => existingPlayer.user_name === player.user_name);
@@ -51,18 +52,23 @@ class Home extends React.Component {
 
             
             this.setNews(message.update, player, news)
-            this.setState({ players: updatedPlayers });
+            this.setState({ players: updatedPlayers,  mainPlayer: player});
         }
     }
 
     handlePlayerCatchUp = (message, players, mainPlayer, news) => {
+        console.log("in handlePlayerCatchUp")
         const all_messages = message.all_messages
+
+        //console.log("all_messages", all_messages)
+        console.log("mainPlayer", mainPlayer)
+        console.log("this.state.mainPlayer", this.state.mainPlayer)
 
         all_messages.forEach(message => {
             const player = message.player
-
+            console.log("player", player)
             const playerExists = players.some(existingPlayer => existingPlayer.user_name === player.user_name);
-
+            
             if (player.user_name !== mainPlayer.user_name && !playerExists) {
                 const updatedPlayers = [...players, {
                         user_name: player.user_name,
@@ -129,6 +135,8 @@ class Home extends React.Component {
     }
 
     setMainPlayer = (mainPlayer) => {
+        console.log("setMainPlayer")
+        console.log("mainPlayer", mainPlayer)
         this.setState({
             mainPlayer: mainPlayer
         })
@@ -140,6 +148,7 @@ class Home extends React.Component {
     }
 
     setWebSocket = (new_ws) => {
+        console.log("In setWebSocket")
         new_ws.onmessage = (event) => {
 
             //STATE
@@ -154,10 +163,12 @@ class Home extends React.Component {
 
 
             if (gameEvent === 'player-joined'){
+                console.log("player-joined")
                 this.handlePlayerJoined(message, players, mainPlayer, news)
             }
 
             if (gameEvent === 'player-catch-up'){
+                console.log("player-catch-up")
                 this.handlePlayerCatchUp(message, players, mainPlayer, news)
             }
             
@@ -190,7 +201,6 @@ class Home extends React.Component {
                         setStep={this.handleStepChange}
                         setIsRoomAdmin={this.setIsRoomAdmin}
                     />
-                    {/* <PlayersNumberStep /> */}
                     <RoomDetailsStep 
                         setWebSocket={this.setWebSocket}
                         isRoomAdmin={this.state.isRoomAdmin}
@@ -199,6 +209,7 @@ class Home extends React.Component {
                     <UserDetailsStep 
                         ws={this.state.ws}
                         setMainPlayer={this.setMainPlayer}
+                        isRoomAdmin={this.state.isRoomAdmin}
                     />
                     <Room 
                         ws={this.state.ws} 

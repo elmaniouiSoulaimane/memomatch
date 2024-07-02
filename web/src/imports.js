@@ -1,6 +1,6 @@
 //COMPONENTS
 import App from "./App.js";
-import Home from "./components/index.js"
+import Home from "./components/Home.js"
 
 //AVATARS
 import av1 from "./media/images/avatars/1.webp"
