@@ -1,8 +1,8 @@
 // Room.js
 import React from "react";
-import Leaderboard from "./Leaderboard";
-import NewsBroadcast from "./NewsBroadcast";
-import Tabs from "./Tabs.js";
+import Leaderboard from "./sub-components/Leaderboard.js";
+import NewsBroadcast from "./sub-components/NewsBroadcast.js";
+import Tabs from "./sub-components/Tabs.js";
 import styles from "../modules/Room.module.css";
 
 class Room extends React.Component {

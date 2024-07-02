@@ -1,6 +1,6 @@
 // Leaderboard.js
 import React from "react";
-import styles from "../modules/Room.module.css";
+import styles from "../../modules/Room.module.css";
 
 
 class Leaderboard extends React.Component {

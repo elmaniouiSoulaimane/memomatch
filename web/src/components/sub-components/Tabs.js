@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import styles from "../modules/Room.module.css"
-import {Cards_Back, cardFlipSound, success} from "../imports"
+import styles from "../../modules/Room.module.css"
+import {Cards_Back, cardFlipSound, success} from "../../imports"
 
 class Tabs extends Component {
   constructor(props) {

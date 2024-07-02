@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../modules/Room.module.css";
+import styles from "../../modules/Room.module.css";
 
 class NewsBroadcast extends React.Component {
     constructor(props) {
