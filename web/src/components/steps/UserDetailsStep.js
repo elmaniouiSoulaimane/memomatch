@@ -81,6 +81,7 @@ class UserDetailsStep extends React.Component {
         const current_player = {
           user_name: this.state.username,
           avatar: this.state.selectedAvatar,
+          isMainPlayer: this.props.isRoomAdmin,
           points: 0,
           cards:this.shuffleArray([
             { name: 'Bird', imageUrl: Bird, flipped: false},
