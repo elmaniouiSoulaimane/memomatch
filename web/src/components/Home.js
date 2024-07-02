@@ -212,9 +212,8 @@ class Home extends React.Component {
                         isRoomAdmin={this.state.isRoomAdmin}
                     />
                     <Room 
-                        ws={this.state.ws} 
+                        ws={this.state.ws}
                         mainPlayer={this.state.mainPlayer}
-                        setMainPlayer={this.setMainPlayer}
                         players={this.state.players} 
                         setPlayers={this.setPlayers} 
                         news={this.state.news}

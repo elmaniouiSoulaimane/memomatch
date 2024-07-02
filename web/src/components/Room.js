@@ -30,7 +30,6 @@ class Room extends React.Component {
                         <Tabs 
                             ws={this.props.ws} 
                             mainPlayer={this.props.mainPlayer}
-                            setMainPlayer={this.props.setMainPlayer}
                             players={this.props.players} 
                             setPlayers={this.props.setPlayers}
                         />
