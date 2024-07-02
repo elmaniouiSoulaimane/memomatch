@@ -17,7 +17,7 @@ class FirstStep extends React.Component {
   handleJoinRoom = () => {
     console.log("In handleJoinRoom")
     this.props.setIsRoomAdmin(false);
-    this.props.goToStep(3);
+    this.props.goToStep(2);
   };
   
   render() {
