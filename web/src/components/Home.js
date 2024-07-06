@@ -96,32 +96,50 @@ class Home extends React.Component {
 
         const { all_messages } = message;
 
-        all_messages.forEach(({ player }) => {
+        console.log("all_messages", all_messages)
+
+        all_messages.forEach(({ player, update }) => {
             const { mainPlayer, players } = this.state;
             let { user_name, avatar, points, cards } = player;
 
             let playerExists = players.some(existingPlayer => existingPlayer.user_name === user_name);
-            console.log("playerExists", playerExists)
+            // console.log("playerExists", playerExists)
             
-            if (user_name !== mainPlayer.user_name && !playerExists) {
-
-                this.setState(prevState => {
-                    const updatedPlayers = [...prevState.players, {
-                        user_name: user_name,
-                        avatar: avatar,
-                        points: points,
-                        cards: cards,
-                        isMainPlayer: false,
-                        disabled: true,
-                    }];
-        
-                    const update = "You caught up to player " + user_name + " who was already in the room.";
-        
-                    return {
-                        players: updatedPlayers,
-                        news: [...prevState.news, {"update": update, "player": player}]
-                    };
-                });
+            // if (user_name !== mainPlayer.user_name && !playerExists) {
+            if (user_name !== mainPlayer.user_name) {
+                if (!playerExists) {
+                    this.setState(prevState => {
+                        const updatedPlayers = [...prevState.players, {
+                            user_name: user_name,
+                            avatar: avatar,
+                            points: points,
+                            cards: cards,
+                            isMainPlayer: false,
+                            disabled: true,
+                        }];
+                        
+                        let newUpdate = "You caught up to player " + user_name + "."
+            
+                        return {
+                            players: updatedPlayers,
+                            news: [...prevState.news, {"update": newUpdate, "player": player}]
+                        };
+                    });
+                }else {
+                    this.setState(prevState => {
+                        const updatedPlayers = [...prevState.players];
+                        for (let i = 0; i < prevState.players.length; i++) {
+                            if (prevState.players[i].user_name === user_name) {
+                                updatedPlayers[i] = player
+                            }
+                        }
+            
+                        return {
+                            players: updatedPlayers,
+                            news: [...prevState.news, {"update": update, "player": player}]
+                        };
+                    });
+                }
             }
         });
     }
