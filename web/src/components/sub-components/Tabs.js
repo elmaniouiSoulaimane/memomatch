@@ -41,67 +41,81 @@ class Tabs extends Component {
     //if player clicked on a non-flipped card and he has not yet reached two flipped cards
     if (!currentCard.flipped && flippedCards.length < 2) {
       //UPDATE PLAYER FLIPPED CARD STATUS
-      this.setState(prevState => {
-        let updatedPlayers = [...players];
-        updatedPlayers[activePlayerIndex].cards[index].flipped = true;
+      
+      let updatedPlayers = [...players];
+      updatedPlayers[activePlayerIndex].cards[index].flipped = true;
 
-        let newFlippedCards = [...prevState.flippedCards, {"card": currentCard, "index":index}];
+      let update = "Player " + players[activePlayerIndex].user_name + " flipped " + currentCard.name + " card."
 
-        let update = "Player " + players[activePlayerIndex].user_name + " flipped " + currentCard.name + " card."
+      let newFlippedCards = [...flippedCards, {"card": currentCard, "index":index}];
 
-        //Checking if player flipped the second card
-        if (newFlippedCards.length === 2) {
-          const [obj1, obj2] = newFlippedCards;
+      this.setState({ flippedCards: newFlippedCards });
+
+      //updating the state of the home component
+      setPlayers(updatedPlayers);
+
+      ws.send(
+        JSON.stringify(
+          { 
+            "event": "player-moved", 
+            "update": update,
+            "player": updatedPlayers[activePlayerIndex]
+          }
+        )
+      );
+
+      //Checking if player flipped the second card
+      if (newFlippedCards.length === 2) {
+        const [obj1, obj2] = newFlippedCards;
+        
+        // Matching cards
+        if (obj1.card.name === obj2.card.name) {
+          setTimeout(() => {
+            this.playSound(1)
+          }, 800);
           
-          // Matching cards
-          if (obj1.card.name === obj2.card.name) {
-            setTimeout(() => {
-              this.playSound(1)
-            }, 800);
-            
-            updatedPlayers[activePlayerIndex].points += 20;
-            update = "Player " + players[activePlayerIndex].user_name + " flipped two " + currentCard.name + " cards!  +20Pts"
-            
-          } else { // Not matching cards
-            const card1 = updatedPlayers[activePlayerIndex].cards[obj1.index]
-            const card2 = updatedPlayers[activePlayerIndex].cards[obj2.index]
-            
-            const resetCards = [card1, card2];
-  
-            setTimeout(() => {
-              resetCards.forEach(card => {
-                card.flipped = false;
-              });
-            }, 1500);
-  
-            update = "Player " + players[activePlayerIndex].user_name + " flipped " + currentCard.name + " a non-matching card, no points."
-  
-          } 
-          
-          //Emptying flipped cards state because the player flipped two cards, so weather they match or not is irrelevant
-          newFlippedCards = []
-        }
+          updatedPlayers[activePlayerIndex].points += 20;
+          update = "Player " + players[activePlayerIndex].user_name + " flipped two " + currentCard.name + " cards!  +20Pts"
 
-        //updating the state of the home component
-        setTimeout(() => {
+          //updating the state of the home component
+          
           setPlayers(updatedPlayers);
-        }, 1500);
 
-        ws.send(
-          JSON.stringify(
-            { 
-              "event":"player-moved", 
-              "update": update,
-              "player": updatedPlayers[activePlayerIndex]
-            }
-          )
-        );
+          ws.send(
+            JSON.stringify(
+              { 
+                "event": "player-moved", 
+                "update": update,
+                "player": updatedPlayers[activePlayerIndex]
+              }
+            )
+          );
 
-        return {
-          flippedCards: newFlippedCards
-        };
-      });
-
+          setTimeout(() => {
+            this.setState({ flippedCards: [] });
+          }, 1500);
+          
+        } else { // Not matching cards
+          setTimeout(() => {
+            updatedPlayers[activePlayerIndex].cards[obj1.index].flipped = false;
+            updatedPlayers[activePlayerIndex].cards[obj2.index].flipped = false;
+            
+            update = "Player " + players[activePlayerIndex].user_name + " flipped " + currentCard.name + " a non-matching card, no points."
+              
+            ws.send(
+              JSON.stringify(
+                { 
+                  "event": "player-moved", 
+                  "update": update,
+                  "player": updatedPlayers[activePlayerIndex]
+                }
+              )
+            );
+            this.setState({ flippedCards: [] });
+          }, 1500);
+        }
+      }
+      
       //if player clicked on a non-flipped card and he has reached two flipped cards
     } else if (!currentCard.flipped && flippedCards.length === 2) {
         console.log("oops you clicked on a third!")
