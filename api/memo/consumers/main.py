@@ -1,5 +1,6 @@
 import json
 import urllib
+from time import time
 
 import aioredis
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -38,7 +39,6 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         # if a user tries to create a room that already exists, reject the connection if he's not already in it
 
-
         # TODO: user must provide a passkey to join a room
         elif action == "join":
             if in_group:
@@ -71,6 +71,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             channel_name
         )
         print("User added to group %s" % group_name)
+        # await self.send_all_room_messages(group_name)
 
     async def receive(self, text_data):
         """
@@ -110,7 +111,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             bool: True if the message is a duplicate, False otherwise.
         """
         redis_key = f'{room_name}_messages'
-        result = await self.redis_client.sismember(redis_key, text_data)
+        result = await self.redis_client.zscore(redis_key, text_data)
 
         return result
 
@@ -145,10 +146,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         message = event["message"]
         await self.send(text_data=json.dumps({"message": message}))
 
-
-
-
-
     async def store_message_in_redis(self, room_name, text_data):
         """
         Store the given text data in Redis for the specified room.
@@ -161,7 +158,8 @@ class GameConsumer(AsyncWebsocketConsumer):
             None
         """
         redis_key = f'{room_name}_messages'
-        await self.redis_client.sadd(redis_key, text_data)
+        timestamp = time()
+        await self.redis_client.zadd(redis_key, {text_data: timestamp})
 
     async def send_all_room_messages(self, room_name):
         """
@@ -177,7 +175,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         """
         print("""Sending all room messages to room %s""" % room_name)
         redis_key = f'{room_name}_messages'
-        all_messages = await self.redis_client.smembers(redis_key)
+        all_messages = await self.redis_client.zrange(redis_key, 0, -1)
 
         try:
             all_messages = [json.loads(message) for message in all_messages]
