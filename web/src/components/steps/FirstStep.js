@@ -4,8 +4,7 @@ import styles from "../../modules/MemoryGame.module.css";
 class FirstStep extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
   }
 
   handleCreateRoom = () => {

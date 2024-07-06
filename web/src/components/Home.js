@@ -23,16 +23,48 @@ class Home extends React.Component {
       };
     }
 
-    // componentDidMount = () => {
-    //     this.state.ws.onopen = () => {}
-    //     this.state.ws.onclose = () => {}
-    //     this.state.ws.onerror = (error) => {}
-    // }
-
     //GAME EVENTS HANDLERS
-    handlePlayerJoined = (message, players, mainPlayer, news) => {
+    setWebSocket = (new_ws) => {
+        console.log("In setWebSocket")
+        new_ws.onmessage = (data) => {
+            console.log("In onmessage")
+
+            //WEBSOCKET
+            const jsonData = JSON.parse(data.data);
+            const {message} = jsonData
+            const {event} = message
+
+            console.log("message",message)
+            console.log("event",event)
+
+            if (event === 'player-joined'){
+                this.handlePlayerJoined(message)
+            }
+
+            if (event === 'player-catch-up'){
+                this.handlePlayerCatchUp(message)
+            }
+            
+            if (event === 'player-moved'){
+                this.handlePlayerMoved(message)  
+            }
+
+            if (event === 'player-quit'){
+                this.handlePlayerQuit(message)
+            }
+        }
+
+        this.setState({
+            ws: new_ws
+        })
+    }
+
+    handlePlayerJoined = (message) => {
         console.log("in handlePlayerJoined")
-        const player = message.player
+        
+        const { players, mainPlayer } = this.state;
+        const {player, update} = message
+        const { user_name, avatar, points, cards } = player;
 
         const playerExists = players.some(existingPlayer => existingPlayer.user_name === player.user_name);
 
@@ -40,80 +72,91 @@ class Home extends React.Component {
 
             const isMainPlayer = mainPlayer.user_name === player.user_name
 
-            const updatedPlayers = [...players, {
-                    user_name: player.user_name,
-                    avatar: player.avatar,
-                    points: player.points,
-                    cards: player.cards,
+            this.setState(prevState => {
+                const updatedPlayers = [...prevState.players, {
+                    user_name: user_name,
+                    avatar: avatar,
+                    points: points,
+                    cards: cards,
                     isMainPlayer: isMainPlayer ? true : false,
                     disabled: isMainPlayer ? false : true
-                }
-            ]
-
-            
-            this.setNews(message.update, player, news)
-            this.setState({ players: updatedPlayers,  mainPlayer: player});
+                }];
+                
+                return {
+                    // mainPlayer: isMainPlayer ? player : prevState.mainPlayer,
+                    players: updatedPlayers,
+                    news: [...prevState.news, {"update": update, "player": player}]
+                };
+            });
         }
     }
 
-    handlePlayerCatchUp = (message, players, mainPlayer, news) => {
+    handlePlayerCatchUp = (message) => {
         console.log("in handlePlayerCatchUp")
-        const all_messages = message.all_messages
 
-        //console.log("all_messages", all_messages)
-        console.log("mainPlayer", mainPlayer)
-        console.log("this.state.mainPlayer", this.state.mainPlayer)
+        const { all_messages } = message;
 
-        all_messages.forEach(message => {
-            const player = message.player
-            console.log("player", player)
-            const playerExists = players.some(existingPlayer => existingPlayer.user_name === player.user_name);
+        all_messages.forEach(({ player }) => {
+            const { mainPlayer, players } = this.state;
+            let { user_name, avatar, points, cards } = player;
+
+            let playerExists = players.some(existingPlayer => existingPlayer.user_name === user_name);
+            console.log("playerExists", playerExists)
             
-            if (player.user_name !== mainPlayer.user_name && !playerExists) {
-                const updatedPlayers = [...players, {
-                        user_name: player.user_name,
-                        avatar: player.avatar,
-                        points: player.points,
-                        cards: player.cards,
+            if (user_name !== mainPlayer.user_name && !playerExists) {
+
+                this.setState(prevState => {
+                    const updatedPlayers = [...prevState.players, {
+                        user_name: user_name,
+                        avatar: avatar,
+                        points: points,
+                        cards: cards,
                         isMainPlayer: false,
                         disabled: true,
-                    }
-                ]
-
-                const update = "You caught up to player " + player.user_name + " who was already in the room."
-
-                this.setNews(update, player, news)
-                this.setState({ players: updatedPlayers });
+                    }];
+        
+                    const update = "You caught up to player " + user_name + " who was already in the room.";
+        
+                    return {
+                        players: updatedPlayers,
+                        news: [...prevState.news, {"update": update, "player": player}]
+                    };
+                });
             }
         });
     }
 
-    handlePlayerMoved = (message, players, mainPlayer, news) => {
-        const updatedPlayer = message.player
+    handlePlayerMoved = (message) => {
+        const { player, update } = message
 
-        if (updatedPlayer.user_name !== mainPlayer.user_name){
-            
-            const updatedPlayers = players.map(player => {
-                if (player.user_name === updatedPlayer.user_name) {
-                    return { ...player, ...updatedPlayer };
+        this.setState(prevState => {
+            const { players, mainPlayer, news } = prevState;
+            if (player.user_name !== mainPlayer.user_name){
+
+                //updates the action of the player that is in the players state variable
+                const updatedPlayers = players.map(item => (item.user_name === player.user_name ? { ...item, ...player } : item));
+
+                return {
+                    players: updatedPlayers,
+                    news: [ ...news, { "update": update, "player": player }]
                 }
-                return player;
-            });
+            }else{
+                return {
+                    news: [ ...news, { "update": update, "player": player }]
+                }
+            }
+        });
+    }
 
+    handlePlayerQuit = (message) => {
+        const { players, mainPlayer } = this.state;
+        const { player } =  message
+
+        if (player.user_name !== mainPlayer.user_name){
+            const updatedPlayers = players.filter(item => item.user_name !== player.user_name);
             this.setState({
                 players: updatedPlayers
             });
-        }
-
-        this.setNews(message.update, updatedPlayer, news)
-    }
-
-    handlePlayerQuit = (message, players, mainPlayer) => {
-        const quitter =  message.player
-
-        if (quitter.user_name !== mainPlayer.user_name){
-            const updatedPlayers = players.filter(player => player.user_name !== quitter.user_name);
-            this.setPlayers(updatedPlayers);
         }
     }
 
@@ -135,54 +178,8 @@ class Home extends React.Component {
     }
 
     setMainPlayer = (mainPlayer) => {
-        console.log("setMainPlayer")
-        console.log("mainPlayer", mainPlayer)
         this.setState({
             mainPlayer: mainPlayer
-        })
-    }
-
-    setNews = (update, updatedPlayer, news) => {
-        const updates = [...news, {"update": update, "player": updatedPlayer}];
-        this.setState({ news: updates });
-    }
-
-    setWebSocket = (new_ws) => {
-        console.log("In setWebSocket")
-        new_ws.onmessage = (event) => {
-
-            //STATE
-            const mainPlayer = this.state.mainPlayer
-            const players = this.state.players
-            const news = this.state.news
-
-            //WEBSOCKET
-            const jsonData = JSON.parse(event.data);
-            const message = jsonData.message
-            const gameEvent = message.event 
-
-
-            if (gameEvent === 'player-joined'){
-                console.log("player-joined")
-                this.handlePlayerJoined(message, players, mainPlayer, news)
-            }
-
-            if (gameEvent === 'player-catch-up'){
-                console.log("player-catch-up")
-                this.handlePlayerCatchUp(message, players, mainPlayer, news)
-            }
-            
-            if (gameEvent === 'player-moved'){
-                this.handlePlayerMoved(message, players, mainPlayer, news)  
-            }
-
-            if (gameEvent === 'player-quit'){
-                this.handlePlayerQuit(message, players, mainPlayer)
-            }
-        }
-
-        this.setState({
-            ws: new_ws
         })
     }
 
@@ -211,7 +208,7 @@ class Home extends React.Component {
                         setMainPlayer={this.setMainPlayer}
                         isRoomAdmin={this.state.isRoomAdmin}
                     />
-                    <Room 
+                    <Room
                         ws={this.state.ws}
                         mainPlayer={this.state.mainPlayer}
                         players={this.state.players} 

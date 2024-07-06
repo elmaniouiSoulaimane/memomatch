@@ -33,7 +33,6 @@ class RoomDetailsStep extends React.Component {
   }
  
   handleClick = () => {
-
     if (this.state.roomName !== '' && this.state.errorMessage === ''){
       let ws = null
       if (this.props.isRoomAdmin) {
@@ -41,16 +40,12 @@ class RoomDetailsStep extends React.Component {
       }else{
         ws = new WebSocket(`ws://127.0.0.1:8000/ws/memomatch/${this.state.roomName}/?action=join`);
       }
-      
-      
+
+      //WEBSOCKET
       ws.onopen = () => {
         this.setState({ wsConnected: true }, () => {
           this.props.setRoomName(this.state.roomName)
           this.props.setWebSocket(ws);
-
-          // const roomName = this.state.roomName
-          // const errorMessage = this.state.errorMessage
-          // const wsConnected = this.state.wsConnected
 
           //NOTIFICATION
           let notifTitle = ""
@@ -114,7 +109,6 @@ class RoomDetailsStep extends React.Component {
       }
     }
   }
-
 
   render() {
     return (

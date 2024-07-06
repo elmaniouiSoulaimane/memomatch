@@ -23,87 +23,86 @@ class Tabs extends Component {
     this.setState({ activePlayerIndex: playerIndex });
   };
 
+  playSound = (index) => {
+    this.state.audioRefs[index].current.play();
+  };
+
   handleCardClick = (index) => {
-    console.log("You clicked on handleCardClick")
-
-    //PROPS
-    const players = this.props.players
-    const setPlayers = this.props.setPlayers
-
-    //STATE
-    const activePlayerIndex = this.state.activePlayerIndex
-    const flippedCards = this.state.flippedCards
-    const currentCard = players[activePlayerIndex].cards[index];
-
-    //LOCALS
-    let update = ""
-
+    console.log("You clicked on a card")
     this.playSound(0)
 
-    
+    //PROPS
+    const {setPlayers, players, ws} = this.props
+
+    //STATE
+    const {activePlayerIndex, flippedCards} = this.state
+    const currentCard = players[activePlayerIndex].cards[index];
+
+    //if player clicked on a non-flipped card and he has not yet reached two flipped cards
     if (!currentCard.flipped && flippedCards.length < 2) {
-      
       //UPDATE PLAYER FLIPPED CARD STATUS
-      const updatedPlayers = [...players];
-      updatedPlayers[activePlayerIndex].cards[index].flipped = true;
-      
-      const newFlippedCards = [...flippedCards, {"card": currentCard, "index":index}];
-      this.setState({ flippedCards: newFlippedCards });
+      this.setState(prevState => {
+        let updatedPlayers = [...players];
+        updatedPlayers[activePlayerIndex].cards[index].flipped = true;
 
-      update = "Player " + players[activePlayerIndex].user_name + " flipped " + currentCard.name + " card."
+        let newFlippedCards = [...prevState.flippedCards, {"card": currentCard, "index":index}];
 
-      if (newFlippedCards.length === 2) {
-        // console.log("===> two")
+        let update = "Player " + players[activePlayerIndex].user_name + " flipped " + currentCard.name + " card."
 
-        
-        const [obj1, obj2] = newFlippedCards;
-        
-        // Matching cards
-        if (obj1.card.name === obj2.card.name) {
-          setTimeout(() => {
-            this.playSound(1)
-          }, 800);
+        //Checking if player flipped the second card
+        if (newFlippedCards.length === 2) {
+          const [obj1, obj2] = newFlippedCards;
           
-          updatedPlayers[activePlayerIndex].points += 20;
-          update = "Player " + players[activePlayerIndex].user_name + " flipped two " + currentCard.name + " cards!  +20Pts"
+          // Matching cards
+          if (obj1.card.name === obj2.card.name) {
+            setTimeout(() => {
+              this.playSound(1)
+            }, 800);
+            
+            updatedPlayers[activePlayerIndex].points += 20;
+            update = "Player " + players[activePlayerIndex].user_name + " flipped two " + currentCard.name + " cards!  +20Pts"
+            
+          } else { // Not matching cards
+            const card1 = updatedPlayers[activePlayerIndex].cards[obj1.index]
+            const card2 = updatedPlayers[activePlayerIndex].cards[obj2.index]
+            
+            const resetCards = [card1, card2];
+  
+            setTimeout(() => {
+              resetCards.forEach(card => {
+                card.flipped = false;
+              });
+            }, 1500);
+  
+            update = "Player " + players[activePlayerIndex].user_name + " flipped " + currentCard.name + " a non-matching card, no points."
+  
+          } 
           
-        } else { // Not matching cards
+          //Emptying flipped cards state because the player flipped two cards, so weather they match or not is irrelevant
+          newFlippedCards = []
+        }
 
-          //console.log("updatedPlayers = " + JSON.stringify(updatedPlayers))
-          const card1 = updatedPlayers[activePlayerIndex].cards[obj1.index]
-          const card2 = updatedPlayers[activePlayerIndex].cards[obj2.index]
-          
-          const resetCards = [card1, card2];
+        //updating the state of the home component
+        setTimeout(() => {
+          setPlayers(updatedPlayers);
+        }, 1500);
 
-          setTimeout(() => {
-            resetCards.forEach(card => {
-              card.flipped = false;
-            });
-          }, 1500);
+        ws.send(
+          JSON.stringify(
+            { 
+              "event":"player-moved", 
+              "update": update,
+              "player": updatedPlayers[activePlayerIndex]
+            }
+          )
+        );
 
-          update = "Player " + players[activePlayerIndex].user_name + " flipped " + currentCard.name + " a non-matching card, no points."
+        return {
+          flippedCards: newFlippedCards
+        };
+      });
 
-        } 
-        
-        this.setState({ 
-          flippedCards: []
-        });
-      }
-
-      setTimeout(() => {
-        setPlayers(updatedPlayers);
-      }, 1500);
-
-      this.props.ws.send(
-        JSON.stringify(
-          { 
-            "event":"player-moved", 
-            "update": update,
-            "player": updatedPlayers[activePlayerIndex]
-          }
-        )
-      );
-
+      //if player clicked on a non-flipped card and he has reached two flipped cards
     } else if (!currentCard.flipped && flippedCards.length === 2) {
         console.log("oops you clicked on a third!")
 
@@ -124,19 +123,13 @@ class Tabs extends Component {
         this.setState({ 
           flippedCards: [{"card": currentCard, "index":index}]
         });
-
         setPlayers(updatedPlayers);
     }
   };
 
-  playSound = (index) => {
-    this.state.audioRefs[index].current.play();
-  };
-
   render(){
-    const players = this.props.players
-    const mainPlayer = this.props.mainPlayer
-    const activePlayerIndex = this.state.activePlayerIndex
+    const {players, mainPlayer} = this.props
+    const {activePlayerIndex, audioRefs, audios} = this.state
 
     return (
       
@@ -181,8 +174,8 @@ class Tabs extends Component {
 
         </div>
         <>
-          {this.state.audioRefs.map((ref, index) => (
-            <audio key={index} ref={ref} src={this.state.audios[index]} />
+          {audioRefs.map((ref, index) => (
+            <audio key={index} ref={ref} src={audios[index]} />
           ))}
         </>
       </div>
