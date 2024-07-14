@@ -25,17 +25,12 @@ class Home extends React.Component {
 
     //GAME EVENTS HANDLERS
     setWebSocket = (new_ws) => {
-        console.log("In setWebSocket")
         new_ws.onmessage = (data) => {
-            console.log("In onmessage")
 
             //WEBSOCKET
             const jsonData = JSON.parse(data.data);
             const {message} = jsonData
             const {event} = message
-
-            console.log("message",message)
-            console.log("event",event)
 
             if (event === 'player-joined'){
                 this.handlePlayerJoined(message)
@@ -95,8 +90,6 @@ class Home extends React.Component {
         console.log("in handlePlayerCatchUp")
 
         const { all_messages } = message;
-
-        console.log("all_messages", all_messages)
 
         all_messages.forEach(({ player, update }) => {
             const { mainPlayer, players } = this.state;

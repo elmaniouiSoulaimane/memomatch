@@ -28,118 +28,134 @@ class Tabs extends Component {
   };
 
   handleCardClick = (index) => {
-    console.log("You clicked on a card")
+    console.log("In handleCardClick")
+
     this.playSound(0)
 
     //PROPS
     const {setPlayers, players, ws} = this.props
 
     //STATE
-    const {activePlayerIndex, flippedCards} = this.state
-    const currentCard = players[activePlayerIndex].cards[index];
+    // let {activePlayerIndex, flippedCards} = this.state
+    let currentCard = players[this.state.activePlayerIndex].cards[index];
+
+    let newFlippedCards = [...this.state.flippedCards, {"card": currentCard, "index":index}];
 
     //if player clicked on a non-flipped card and he has not yet reached two flipped cards
-    if (!currentCard.flipped && flippedCards.length < 2) {
-      //UPDATE PLAYER FLIPPED CARD STATUS
+    if (!currentCard.flipped && this.state.flippedCards.length < 2) {
+
       
-      let updatedPlayers = [...players];
-      updatedPlayers[activePlayerIndex].cards[index].flipped = true;
-
-      let update = "Player " + players[activePlayerIndex].user_name + " flipped " + currentCard.name + " card."
-
-      let newFlippedCards = [...flippedCards, {"card": currentCard, "index":index}];
-
-      this.setState({ flippedCards: newFlippedCards });
-
-      //updating the state of the home component
-      setPlayers(updatedPlayers);
-
-      ws.send(
-        JSON.stringify(
-          { 
-            "event": "player-moved", 
-            "update": update,
-            "player": updatedPlayers[activePlayerIndex]
-          }
-        )
-      );
-
+      const {updatedPlayers} = this.updatePlayerFlippedCard(players, this.state.activePlayerIndex, index, currentCard, newFlippedCards, setPlayers, ws)
+      
       //Checking if player flipped the second card
       if (newFlippedCards.length === 2) {
         const [obj1, obj2] = newFlippedCards;
         
-        // Matching cards
         if (obj1.card.name === obj2.card.name) {
-          setTimeout(() => {
-            this.playSound(1)
-          }, 800);
+          this.handleMatchingCards(updatedPlayers, this.state.activePlayerIndex, currentCard, setPlayers, ws)
           
-          updatedPlayers[activePlayerIndex].points += 20;
-          update = "Player " + players[activePlayerIndex].user_name + " flipped two " + currentCard.name + " cards!  +20Pts"
-
-          //updating the state of the home component
-          
-          setPlayers(updatedPlayers);
-
-          ws.send(
-            JSON.stringify(
-              { 
-                "event": "player-moved", 
-                "update": update,
-                "player": updatedPlayers[activePlayerIndex]
-              }
-            )
-          );
-
-          setTimeout(() => {
-            this.setState({ flippedCards: [] });
-          }, 1500);
-          
-        } else { // Not matching cards
-          setTimeout(() => {
-            updatedPlayers[activePlayerIndex].cards[obj1.index].flipped = false;
-            updatedPlayers[activePlayerIndex].cards[obj2.index].flipped = false;
-            
-            update = "Player " + players[activePlayerIndex].user_name + " flipped " + currentCard.name + " a non-matching card, no points."
-              
-            ws.send(
-              JSON.stringify(
-                { 
-                  "event": "player-moved", 
-                  "update": update,
-                  "player": updatedPlayers[activePlayerIndex]
-                }
-              )
-            );
-            this.setState({ flippedCards: [] });
-          }, 1500);
+        } else {
+          this.handleNonMatchingCards(updatedPlayers, this.state.activePlayerIndex, currentCard, obj1, obj2, ws)
         }
       }
       
       //if player clicked on a non-flipped card and he has reached two flipped cards
-    } else if (!currentCard.flipped && flippedCards.length === 2) {
-        console.log("oops you clicked on a third!")
-
-        const updatedPlayers = [...players];
-        updatedPlayers[activePlayerIndex].cards[index].flipped = true;
-                
-        const [obj1, obj2] = flippedCards;
-
-        const card1 = updatedPlayers[activePlayerIndex].cards[obj1.index]
-        const card2 = updatedPlayers[activePlayerIndex].cards[obj2.index]
-
-        const resetCards = [card1, card2];
-
-        resetCards.forEach(card => {
-          card.flipped = false;
-        });
-
-        this.setState({ 
-          flippedCards: [{"card": currentCard, "index":index}]
-        });
-        setPlayers(updatedPlayers);
+    } else if (!currentCard.flipped && this.state.flippedCards.length === 2) {
+        this.handleThirdCardClick(players, currentCard, index, setPlayers, ws)
     }
   };
+
+  sendWebSocketMessage = (ws, update, player) => {
+    console.log("In sendWebSocketMessage")
+    ws.send(
+      JSON.stringify(
+        { 
+          "event": "player-moved", 
+          "update": update,
+          "player": player
+        }
+      )
+    );
+  };
+
+  updatePlayerFlippedCard = (players, activePlayerIndex, cardIndex, currentCard, newFlippedCards, setPlayers, ws) => {
+    console.log("In updatePlayerFlippedCard")
+    let updatedPlayers = [...players];
+    updatedPlayers[activePlayerIndex].cards[cardIndex].flipped = true;
+
+    let update = "Player " + players[activePlayerIndex].user_name + " flipped " + currentCard.name + " card."
+
+    console.log("//// newFlippedCards", newFlippedCards)
+
+    this.setState((state) => {
+      return { flippedCards: newFlippedCards };
+    })
+    setPlayers(updatedPlayers);
+
+    this.sendWebSocketMessage(ws, update, updatedPlayers[activePlayerIndex]);
+
+    return {updatedPlayers: updatedPlayers}
+  };
+
+  handleMatchingCards = (players, activePlayerIndex, currentCard, setPlayers, ws) => {
+    console.log("In handleMatchingCards")
+    setTimeout(() => {
+      this.playSound(1)
+    }, 800);
+    
+    let updatedPlayers = [...players];
+    updatedPlayers[activePlayerIndex].points += 20;
+    let update = "Player " + players[activePlayerIndex].user_name + " flipped two " + currentCard.name + " cards!  +20Pts"
+    
+    setPlayers(updatedPlayers);
+
+    this.sendWebSocketMessage(ws, update, updatedPlayers[activePlayerIndex]);
+
+    setTimeout(() => {
+      this.setState({ flippedCards: [] });
+    }, 1500);
+  };
+
+  handleNonMatchingCards = (players, activePlayerIndex, currentCard, card1, card2, ws) => {
+    console.log("In handleNonMatchingCards")
+
+    setTimeout(() => {
+      let updatedPlayers = [...players];
+      updatedPlayers[activePlayerIndex].cards[card1.index].flipped = false;
+      updatedPlayers[activePlayerIndex].cards[card2.index].flipped = false;
+      
+      let update = "Player " + players[activePlayerIndex].user_name + " flipped " + currentCard.name + " a non-matching card, no points."
+      this.sendWebSocketMessage(ws, update, updatedPlayers[activePlayerIndex]);
+
+      this.setState((state) => {
+        return { flippedCards: [] };
+      });
+    }, 1500);
+  };
+
+  handleThirdCardClick = (players, currentCard, index, setPlayers, ws) => {
+    console.log("In handleThirdCardClick")
+    //FLIP THE FIRST TWO CARDS FAST AND INFORM EVERYONE
+    const updatedPlayers = [...players];
+
+    const [obj1, obj2] = this.state.flippedCards;
+    updatedPlayers[this.state.activePlayerIndex].cards[obj1.index].flipped = false;
+    updatedPlayers[this.state.activePlayerIndex].cards[obj2.index].flipped = false;
+    updatedPlayers[this.state.activePlayerIndex].cards[index].flipped = true;
+    let newFlippedCards = [{"card": currentCard, "index":index}];
+
+    setPlayers(updatedPlayers);
+
+    let update = "Player " + updatedPlayers[this.state.activePlayerIndex].user_name + " flipped " + currentCard.name + " card."
+
+    this.sendWebSocketMessage(ws, update, updatedPlayers[this.state.activePlayerIndex])
+
+    setTimeout(() => {
+      this.setState({ flippedCards: newFlippedCards });
+    }, 500);
+  };
+
+  
 
   render(){
     const {players, mainPlayer} = this.props
