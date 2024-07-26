@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: memos
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: VD9uw5-+Vr_+Sd;
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  django:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    container_name: django_app
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+  react:
+    build:
+      context: .
+      dockerfile: web/Dockerfile
+    container_name: react_app
+    command: npm start
+    ports:
+      - "3000:3000"
