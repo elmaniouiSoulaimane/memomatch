@@ -26,15 +26,11 @@ class Home extends Component {
     //GAME EVENTS HANDLERS
     setWebSocket = (new_ws) => {
         new_ws.onmessage = (data) => {
-            console.log("onmessage")
-            console.log("data = " + data.data)
 
             //WEBSOCKET
             const jsonData = JSON.parse(data.data);
             const {message} = jsonData
             const {event} = message
-
-            console.log("event = " + event)
 
             if (event === 'player-joined'){
                 this.handlePlayerJoined(message)
@@ -142,7 +138,6 @@ class Home extends Component {
                 }
             }
         });
-        //this.state.stepWizardRef.current.goToStep(4);
     }
 
     handlePlayerMoved = (message) => {
