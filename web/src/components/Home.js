@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component, createRef } from 'react';
 import styles from "../modules/MemoryGame.module.css";
 import StepWizard from "react-step-wizard";
 
@@ -9,11 +9,11 @@ import RoomDetailsStep from "./steps/RoomDetailsStep.js";
 import UserDetailsStep from "./steps/UserDetailsStep.js";
 import Room from "./Room.js";
 
-class Home extends React.Component {
+class Home extends Component {
     constructor(props) {
       super(props);
       this.state = {
-        currentStep: 1,
+        stepWizardRef: createRef(),
         ws: null,
         mainPlayer: null,
         players: [],
@@ -26,11 +26,15 @@ class Home extends React.Component {
     //GAME EVENTS HANDLERS
     setWebSocket = (new_ws) => {
         new_ws.onmessage = (data) => {
+            console.log("onmessage")
+            console.log("data = " + data.data)
 
             //WEBSOCKET
             const jsonData = JSON.parse(data.data);
             const {message} = jsonData
             const {event} = message
+
+            console.log("event = " + event)
 
             if (event === 'player-joined'){
                 this.handlePlayerJoined(message)
@@ -83,6 +87,9 @@ class Home extends React.Component {
                     news: [...prevState.news, {"update": update, "player": player}]
                 };
             });
+        } 
+        if (player.user_name === mainPlayer.user_name) {
+            this.state.stepWizardRef.current.goToStep(4);
         }
     }
 
@@ -135,6 +142,7 @@ class Home extends React.Component {
                 }
             }
         });
+        //this.state.stepWizardRef.current.goToStep(4);
     }
 
     handlePlayerMoved = (message) => {
@@ -171,11 +179,6 @@ class Home extends React.Component {
         }
     }
 
-    //SET STATE
-    handleStepChange = (step) => {
-        this.setState({ currentStep: step });
-    }
-
     setPlayers = (players) => {
         this.setState({
             players: players
@@ -204,9 +207,8 @@ class Home extends React.Component {
         return (
             <div className={styles.mainContainer}>
                 <h1 className={styles.h1}>Memory Game</h1>
-                <StepWizard className={styles.wizard} initialStep={this.state.currentStep}>
-                    <FirstStep 
-                        setStep={this.handleStepChange}
+                <StepWizard className={styles.wizard} initialStep={this.state.currentStep} ref={this.state.stepWizardRef}>
+                    <FirstStep
                         setIsRoomAdmin={this.setIsRoomAdmin}
                     />
                     <RoomDetailsStep 

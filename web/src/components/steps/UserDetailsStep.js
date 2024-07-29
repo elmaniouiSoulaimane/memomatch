@@ -78,7 +78,7 @@ class UserDetailsStep extends React.Component {
       
       if (this.props.ws && this.state.selectedAvatar !== '' && this.state.username !== '') {
                 
-        const current_player = {
+        let current_player = {
           user_name: this.state.username,
           avatar: this.state.selectedAvatar,
           points: 0,
@@ -106,22 +106,23 @@ class UserDetailsStep extends React.Component {
           ])
         }
 
-        const update = "Player " + current_player.user_name + " has joined the room."
+        let update = "Player " + current_player.user_name + " has joined the room."
 
         this.props.setMainPlayer(current_player);
-
-        this.props.ws.send(
-          JSON.stringify(
-            { 
-              "event":"player-joined", 
-              "update":update, 
-              "player": current_player
-            }
-          )
-        );
+        try {
+          this.props.ws.send(
+            JSON.stringify(
+              { 
+                "event":"player-joined", 
+                "update":update, 
+                "player": current_player
+              }
+            )
+          );
+        } catch(err) {
+          console.log(err)
+        }
       }
-      
-      this.props.nextStep();
     }
 
     shuffleArray(array) {
