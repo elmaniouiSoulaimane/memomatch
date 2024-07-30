@@ -1,5 +1,5 @@
 import React from "react";
-import { Store } from 'react-notifications-component';
+//import { Store } from 'react-notifications-component';
 import styles from "../../modules/MemoryGame.module.css";
 
 class RoomDetailsStep extends React.Component {
@@ -43,70 +43,9 @@ class RoomDetailsStep extends React.Component {
 
       //WEBSOCKET
       ws.onopen = () => {
-        this.setState({ wsConnected: true }, () => {
-          this.props.setRoomName(this.state.roomName)
-          this.props.setWebSocket(ws);
-
-          //NOTIFICATION
-          let notifTitle = ""
-
-          if (this.props.isRoomAdmin){
-            notifTitle = "Room created successfully!"
-
-          }else{
-            notifTitle = "You joined the room successfully!"
-          }
-
-          Store.addNotification({
-            title: notifTitle,
-            message: '',
-            type: "success",
-            insert: "top",
-            container: "top-right",
-            animationIn: ["animate__animated", "animate__fadeIn"],
-            animationOut: ["animate__animated", "animate__fadeOut"],
-            dismiss: {
-              duration: 5000,
-              onScreen: true
-            }
-          });
-
-          this.props.nextStep();
-        });
+        this.props.setRoomName(this.state.roomName)
+        this.props.setWebSocket(ws);
       };
-
-      ws.onerror = (error) => {
-
-        //NOTIFICATION
-        let notifTitle = ""
-        let notifMsg = ""
-
-        console.log("isRoomAdmin = " + this.props.isRoomAdmin)
-
-        if (this.props.isRoomAdmin){
-          notifTitle = "Room creation failed!"
-          notifMsg = "There was an issue connecting with the server."
-
-        }else{
-          notifTitle = "Room joining failed!"
-          notifMsg = "There was an issue connecting with the server."
-        }
-
-
-        Store.addNotification({
-          title: notifTitle,
-          message: notifMsg,
-          type: "danger",
-          insert: "top",
-          container: "top-right",
-          animationIn: ["animate__animated", "animate__fadeIn"],
-          animationOut: ["animate__animated", "animate__fadeOut"],
-          dismiss: {
-            duration: 5000,
-            onScreen: true
-          }
-        })
-      }
     }
   }
 

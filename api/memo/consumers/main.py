@@ -31,8 +31,13 @@ class GameConsumer(AsyncWebsocketConsumer):
             if not group_exists:
                 await self.add_user_to_group()
                 print('Room "%s" created' % self.group_name)
-                print('You\'re added to group "%s"' % self.group_name)
                 await self.accept()
+                await self.send(text_data=json.dumps({
+                    "success": {
+                        "type": "room-created",
+                        "message": 'Room "%s" created successfully' % self.group_name
+                    }
+                }))
             else:
                 print('Room "%s" already exists' % self.group_name)
                 if in_group:
@@ -42,29 +47,51 @@ class GameConsumer(AsyncWebsocketConsumer):
                     # TODO: fetch his all messages
                     print('you\'re already in the group "%s", welcome back' % self.group_name)
                     await self.accept()
+                    await self.send(text_data=json.dumps({
+                        "success": {
+                            "type": "joined-room",
+                            "message": 'you\'re already in the group "%s", welcome back' % self.group_name
+                        }
+                    }))
                 else:
                     print("Access denied, key required")
-                    await self.close()
 
-        # if a user tries to create a room that already exists, reject the connection if he's not already in it
+                    await self.accept()
+                    await self.send(text_data=json.dumps({
+                        "error": "Access denied, room already exists and you're not a member"
+                    }))
+                    await self.close()
 
         # TODO: user must provide a passkey to join a room
         elif action == "join":
-            if in_group:
-                # TODO: send a message to the client that he's already in the room
-                # TODO: redirect him to the room
-                # TODO: fetch his name
-                # TODO: fetch his all messages
-                print("you're already in the group %s, welcome back" % self.group_name)
+            if not group_exists:
+                print('Room "%s" does not exist' % self.group_name)
                 await self.accept()
-            else:
-                print("Access denied, key required")
-                # await self.close()
-                # I accept because he chose join and for now there's no mechanism that checks for a passkey
-                await self.add_user_to_group()
-                await self.accept()
+                await self.send(text_data=json.dumps({
+                    "error": 'Room "%s" does not exist' % self.group_name
+                }))
+                await self.close()
 
-            # self.send_all_room_messages(room_name)
+            elif group_exists:
+                if in_group:
+                    # TODO: send a message to the client that he's already in the room
+                    # TODO: redirect him to the room
+                    # TODO: fetch his name
+                    # TODO: fetch his all messages
+                    print('you\'re already in the "%s" group, welcome back' % self.group_name)
+                    await self.accept()
+                    await self.send(text_data=json.dumps({
+                        "success": 'you\'re already in the "%s" group, welcome back' % self.group_name
+                    }))
+                else:
+                    print("Access denied, key required")
+                    # await self.close()
+                    # I accept because he chose join and for now there's no mechanism that checks for a passkey
+                    await self.add_user_to_group()
+                    await self.accept()
+                    await self.send(text_data=json.dumps({
+                        "error": "Access denied, key required"
+                    }))
 
     async def group_exists(self) -> bool:
         result = await self.redis_client.exists(f"group:{self.group_name}")
@@ -92,7 +119,6 @@ class GameConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
         print("User added to group %s" % self.group_name)
-        # await self.send_all_room_messages(group_name)
 
     async def receive(self, text_data=None, bytes_data=None):
         """
@@ -117,7 +143,8 @@ class GameConsumer(AsyncWebsocketConsumer):
             - If the event type is "player-moved":
                 - It saves the player event by calling the `save_player_event` method.
         """
-        print("--------------------------------------------------------------------------------------------------------")
+        print(
+            "--------------------------------------------------------------------------------------------------------")
         print("In receive")
 
         if text_data:
@@ -132,9 +159,13 @@ class GameConsumer(AsyncWebsocketConsumer):
                     status = await self.save_player_event("player-joined", text_data)
 
                     if status:
+                        await self.send(text_data=json.dumps({
+                            "success": {
+                                "type": "player-joined",
+                                "message": 'Joined room "%s"' % self.group_name
+                            }
+                        }))
                         await self.send_all_room_messages()
-
-                # await self.send_all_room_messages()
 
             if event == "player-moved":
                 await self.save_player_event(event, text_data)

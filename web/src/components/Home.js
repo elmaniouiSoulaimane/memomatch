@@ -1,6 +1,7 @@
 import React, { Component, createRef } from 'react';
 import styles from "../modules/MemoryGame.module.css";
 import StepWizard from "react-step-wizard";
+import { Store } from 'react-notifications-component';
 
 //STEPS
 import FirstStep from "./steps/FirstStep.js";
@@ -26,28 +27,80 @@ class Home extends Component {
     //GAME EVENTS HANDLERS
     setWebSocket = (new_ws) => {
         new_ws.onmessage = (data) => {
+            console.log("Home: onmessage")
 
-            //WEBSOCKET
             const jsonData = JSON.parse(data.data);
-            const {message} = jsonData
-            const {event} = message
 
-            if (event === 'player-joined'){
-                this.handlePlayerJoined(message)
+            if (jsonData.success){
+                if (jsonData.success.type === "room-created"){
+                    Store.addNotification({
+                        title: "Success",
+                        message: jsonData.success.message,
+                        type: "success",
+                        insert: "top",
+                        container: "top-right",
+                        animationIn: ["animate__animated", "animate__fadeIn"],
+                        animationOut: ["animate__animated", "animate__fadeOut"],
+                        dismiss: {
+                          duration: 5000,
+                          onScreen: true
+                        }
+                    });
+                    this.state.stepWizardRef.current.goToStep(3);
+                }
             }
 
-            if (event === 'player-catch-up'){
-                this.handlePlayerCatchUp(message)
+            if (jsonData.error){
+                Store.addNotification({
+                    title: "Error",
+                    message: jsonData.error,
+                    type: "danger",
+                    insert: "top",
+                    container: "top-right",
+                    animationIn: ["animate__animated", "animate__fadeIn"],
+                    animationOut: ["animate__animated", "animate__fadeOut"],
+                    dismiss: {
+                      duration: 5000,
+                      onScreen: true
+                    }
+                  });
             }
+
             
-            if (event === 'player-moved'){
-                this.handlePlayerMoved(message)  
-            }
-
-            if (event === 'player-quit'){
-                this.handlePlayerQuit(message)
+            if (jsonData.message){
+                if (jsonData.message.event === 'player-joined'){
+                    this.handlePlayerJoined(jsonData.message)
+                }
+    
+                if (jsonData.message.event === 'player-catch-up'){
+                    this.handlePlayerCatchUp(jsonData.message)
+                }
+                
+                if (jsonData.message.event === 'player-moved'){
+                    this.handlePlayerMoved(jsonData.message)  
+                }
+    
+                if (jsonData.message.event === 'player-quit'){
+                    this.handlePlayerQuit(jsonData.message)
+                }
             }
         }
+
+        new_ws.onerror = (error) => {
+            Store.addNotification({
+              title: "Error",
+              message: error,
+              type: "danger",
+              insert: "top",
+              container: "top-right",
+              animationIn: ["animate__animated", "animate__fadeIn"],
+              animationOut: ["animate__animated", "animate__fadeOut"],
+              dismiss: {
+                duration: 5000,
+                onScreen: true
+              }
+            })
+          }
 
         this.setState({
             ws: new_ws
@@ -86,6 +139,19 @@ class Home extends Component {
         } 
         if (player.user_name === mainPlayer.user_name) {
             this.state.stepWizardRef.current.goToStep(4);
+            Store.addNotification({
+                title: "Success",
+                message: "Joined the room successfully",
+                type: "success",
+                insert: "top",
+                container: "top-right",
+                animationIn: ["animate__animated", "animate__fadeIn"],
+                animationOut: ["animate__animated", "animate__fadeOut"],
+                dismiss: {
+                  duration: 5000,
+                  onScreen: true
+                }
+              });
         }
     }
 
