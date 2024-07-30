@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component, createRef } from 'react';
 import styles from "../../modules/MemoryGame.module.css";
 
 import {
@@ -30,9 +30,10 @@ import {
   Soccer
 } from "../../imports"
 
-class UserDetailsStep extends React.Component {
+class UserDetailsStep extends Component {
     constructor(props) {
         super(props);
+        this.mainInputRef = createRef();
         this.state = {
           username: '',
           errorMessage: '',
@@ -40,6 +41,17 @@ class UserDetailsStep extends React.Component {
           selectedAvatar: '',
         };
     }
+
+    componentDidUpdate(prevProps) {
+      // Check if the step has just become active
+      if (!prevProps.isActive && this.props.isActive) {
+        // Focus the input element if the step is now active
+        if (this.mainInputRef.current) {
+          this.mainInputRef.current.focus();
+        }
+      }
+    }
+  
     
     handleAvatarSelect = (avatarName) => {    
       this.setState({ 
@@ -125,6 +137,19 @@ class UserDetailsStep extends React.Component {
       }
     }
 
+    previousStep = () => {
+      //set input value to empty string
+      this.setState({
+        username: '',
+        selectedAvatar: '',
+        errorMessage: '',
+        isNextButtonDisabled: true
+      });
+  
+      this.props.previousStep();
+    }
+  
+
     shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -157,7 +182,9 @@ class UserDetailsStep extends React.Component {
                 <span>Your username:</span>
                 <input
                   type="text"
+                  ref={this.mainInputRef}
                   onChange={this.validateInput}
+                  value={this.state.username}
                 />
             </div>
             {this.state.errorMessage && <p style={{ color: 'red' }}>{this.state.errorMessage}</p>}
@@ -177,7 +204,7 @@ class UserDetailsStep extends React.Component {
             </div>
     
             <div className={styles.btnsContainer}>
-                <button onClick={this.props.previousStep} className={styles.prevBtn}>Previous</button>
+                <button onClick={this.previousStep} className={styles.prevBtn}>Previous</button>
                 <button onClick={this.handleClick} className={styles.nextBtn} disabled={this.state.isNextButtonDisabled}>Ready!</button>
             </div>
         </div>
