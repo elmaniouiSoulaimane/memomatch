@@ -46,6 +46,24 @@ class Home extends Component {
                           onScreen: true
                         }
                     });
+
+                    this.state.stepWizardRef.current.goToStep(3);
+
+                }else if (jsonData.success.type === "joined-room"){
+                    Store.addNotification({
+                        title: "Success",
+                        message: jsonData.success.message,
+                        type: "success",
+                        insert: "top",
+                        container: "top-right",
+                        animationIn: ["animate__animated", "animate__fadeIn"],
+                        animationOut: ["animate__animated", "animate__fadeOut"],
+                        dismiss: {
+                          duration: 5000,
+                          onScreen: true
+                        }
+                    });
+
                     this.state.stepWizardRef.current.goToStep(3);
                 }
             }
@@ -53,7 +71,7 @@ class Home extends Component {
             if (jsonData.error){
                 Store.addNotification({
                     title: "Error",
-                    message: jsonData.error,
+                    message: jsonData.error.message,
                     type: "danger",
                     insert: "top",
                     container: "top-right",
