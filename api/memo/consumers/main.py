@@ -295,6 +295,31 @@ class GameConsumer(AsyncWebsocketConsumer):
                 return True
         return False
 
+    async def is_duplicate_message(self, text_data) -> bool:
+        """
+        Check if a message is a duplicate by checking if it exists in the Redis set for the given room.
+
+        Parameters:
+            room_name (str): The name of the room.
+            text_data (str): The message to check for duplication.
+
+        Returns:
+            bool: True if the message is a duplicate, False otherwise.
+        """
+        result = await self.redis_client.zscore(self.group_name, text_data)
+        if result:
+            print("Message is a duplicate")
+            return True
+        else:
+            print("Message is not a duplicate")
+            return False
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # SEND OPERATIONS
+    async def news_broadcast(self, event):
+        message = event["message"]
+        await self.send(text_data=json.dumps({"message": message}))
+
     async def send_all_room_messages(self):
         """
         Send all room messages to the specified room by retrieving messages from Redis,
