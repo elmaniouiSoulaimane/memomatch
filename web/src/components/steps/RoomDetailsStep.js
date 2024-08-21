@@ -1,6 +1,7 @@
 import React, { Component, createRef } from 'react';
 //import { Store } from 'react-notifications-component';
 import styles from "../../modules/MemoryGame.module.css";
+import { Store } from 'react-notifications-component';
 
 class RoomDetailsStep extends Component {
   constructor(props) {
@@ -59,6 +60,25 @@ class RoomDetailsStep extends Component {
           this.props.setWebSocket(ws);
           this.setState({ wsConnected: true });
         };
+
+        ws.onerror = (error) => {
+          console.log("In error")
+          Store.addNotification({
+            title: "Error",
+            message: error.message || "An unknown error occurred",
+            type: "danger",
+            insert: "top",
+            container: "top-right",
+            animationIn: ["animate__animated", "animate__fadeIn"],
+            animationOut: ["animate__animated", "animate__fadeOut"],
+            dismiss: {
+              duration: 5000,
+              onScreen: true
+            }
+          })
+        }
+
+
       }else{
         this.props.nextStep();
       }
