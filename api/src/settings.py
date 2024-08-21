@@ -96,11 +96,11 @@ CHANNEL_LAYERS = {
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'memos',
-        'USER': 'root',
-        'PASSWORD': 'VD9uw5-+Vr_+Sd;',
-        'HOST': '127.0.0.1',
+        'ENGINE': '',
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
         'PORT': '',
     }
 }
