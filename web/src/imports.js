@@ -33,7 +33,9 @@ import Cards_Back from "./media/images/cards/Cards_Back.webp"
 
 
 //SOUNDS
-import cardFlipSound from "./media/sounds/card_flip.mp3";
+import cardFlipSound from "./media/sounds/card-flip.mp3";
+import crowdBooingSound from "./media/sounds/crowd-booing.mp3";
+import crowdCheeringSound from "./media/sounds/crowd-cheering.mp3";
 import success from "./media/sounds/success.mp3";
 
 export{
@@ -73,5 +75,7 @@ export{
 
 export {
     cardFlipSound,
+    crowdBooingSound,
+    crowdCheeringSound,
     success
   }

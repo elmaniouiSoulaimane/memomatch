@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styles from "../../modules/Room.module.css"
-import {Cards_Back, cardFlipSound, success} from "../../imports"
+import {Cards_Back, cardFlipSound, crowdBooingSound, crowdCheeringSound, success} from "../../imports"
 
 class Tabs extends Component {
   constructor(props) {
@@ -11,10 +11,14 @@ class Tabs extends Component {
       audioRefs: [
         React.createRef(),
         React.createRef(),
+        React.createRef(),
+        React.createRef(),
       ],
       audios: [
         cardFlipSound,
-        success
+        success,
+        crowdBooingSound,
+        crowdCheeringSound
       ]
     };
   }
@@ -63,6 +67,11 @@ class Tabs extends Component {
     } else if (!currentCard.flipped && this.state.flippedCards.length === 2) {
         this.handleThirdCardClick(players, currentCard, index, setPlayers, ws)
     }
+
+    if (this.allCardsFlipped(players)) {
+      this.playSound(3)
+    }
+      
   };
 
   sendWebSocketMessage = (ws, update, player) => {
@@ -154,6 +163,13 @@ class Tabs extends Component {
       this.setState({ flippedCards: newFlippedCards });
     }, 500);
   };
+
+  allCardsFlipped = (players) => {
+    console.log("In allCardsFlipped")
+    let current_player = players[this.state.activePlayerIndex];
+
+    return current_player.cards.every((card) => card.flipped === true);
+  }
 
   
 
