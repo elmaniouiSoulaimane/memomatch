@@ -64,7 +64,7 @@ class Tabs extends Component {
         }
       }
       
-      //if player clicked on a non-flipped card and he has reached two flipped cards
+      //if player clicked on a non-flipped card and he has reached three flipped cards
     } else if (!currentCard.flipped && this.state.flippedCards.length === 2) {
       this.playSound(0)
       this.handleThirdCardClick(players, currentCard, index, setPlayers, ws)
@@ -125,9 +125,7 @@ class Tabs extends Component {
 
     this.sendWebSocketMessage(ws, "player-moved", update, updatedPlayers[activePlayerIndex]);
 
-    setTimeout(() => {
-      this.setState({ flippedCards: [] });
-    }, 1500);
+    this.setState({ flippedCards: [] });
   };
 
   handleNonMatchingCards = (players, activePlayerIndex, currentCard, card1, card2, ws) => {
