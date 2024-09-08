@@ -239,10 +239,6 @@ class Home extends Component {
                     players: updatedPlayers,
                     news: [ ...news, { "update": update, "player": player }]
                 }
-            }else{
-                return {
-                    news: [ ...news, { "update": update, "player": player }]
-                }
             }
         });
     }
