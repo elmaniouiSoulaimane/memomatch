@@ -205,7 +205,9 @@ class Home extends Component {
                             news: [...prevState.news, {"update": newUpdate, "player": player}]
                         };
                     });
-                }else {
+                }
+                //Because the db saves every players movement, we only need to update the player that is in the players state variable.
+                else {
                     this.setState(prevState => {
                         const updatedPlayers = [...prevState.players];
                         for (let i = 0; i < prevState.players.length; i++) {
@@ -215,8 +217,7 @@ class Home extends Component {
                         }
             
                         return {
-                            players: updatedPlayers,
-                            news: [...prevState.news, {"update": update, "player": player}]
+                            players: updatedPlayers
                         };
                     });
                 }
