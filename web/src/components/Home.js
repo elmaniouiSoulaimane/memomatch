@@ -2,6 +2,7 @@ import React, { Component, createRef } from 'react';
 import styles from "../modules/MemoryGame.module.css";
 import StepWizard from "react-step-wizard";
 import { Store } from 'react-notifications-component';
+import {cardFlipSound, crowdBooingSound, crowdCheeringSound, success} from "../imports"
 
 //STEPS
 import FirstStep from "./steps/FirstStep.js";
@@ -21,9 +22,25 @@ class Home extends Component {
         news: [],
         roomName: '',
         isRoomAdmin: false,
-        gameCompleted: false
+        gameCompleted: false,
+        audioRefs: [
+            React.createRef(),
+            React.createRef(),
+            React.createRef(),
+            React.createRef(),
+        ],
+        audios: [
+            cardFlipSound,
+            success,
+            crowdBooingSound,
+            crowdCheeringSound
+        ]
       };
     }
+
+    playSound = (index) => {
+        this.state.audioRefs[index].current.play();
+      };
 
     //GAME EVENTS HANDLERS
     setWebSocket = (new_ws) => {
@@ -277,6 +294,7 @@ class Home extends Component {
 
             if (player.user_name !== mainPlayer.user_name){
                 updatedPlayers = players.map(item => (item.user_name === player.user_name ? { ...item, ...player } : item));
+                this.playSound(2)
                 return {
                     players: updatedPlayers,
                     gameCompleted: true,
@@ -315,6 +333,8 @@ class Home extends Component {
     }
 
     render() {
+        const {audioRefs, audios} = this.state
+
         return (
             <div className={styles.mainContainer}>
                 <h1 className={styles.h1}>Memory Game</h1>
@@ -342,6 +362,11 @@ class Home extends Component {
                         gameCompleted={this.state.gameCompleted}
                     />
                 </StepWizard>
+                <>
+                    {audioRefs.map((ref, index) => (
+                        <audio key={index} ref={ref} src={audios[index]} />
+                    ))}
+                </>
             </div>
         );
     }

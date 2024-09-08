@@ -183,7 +183,6 @@ class Tabs extends Component {
     const {activePlayerIndex, audioRefs, audios} = this.state
 
     return (
-      
       <div>
         <div className={styles.tabs}>
           {players.map((player, index) => (
@@ -217,8 +216,6 @@ class Tabs extends Component {
                   <img src={card.imageUrl} alt={card.name} />
                 </div>
               </div>
-
-              
             </button>
             
           ))}
