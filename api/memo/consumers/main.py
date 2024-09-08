@@ -156,6 +156,14 @@ class GameConsumer(AsyncWebsocketConsumer):
 
             if event == "player-moved":
                 await self.save_player_event(event, text_data)
+
+            if event == "player-quit":
+                await self.save_player_event(event, text_data)
+
+            if event == "player-won":
+                await self.save_player_event(event, text_data)
+
+
         else:
             print("No text data received")
 
@@ -204,7 +212,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 }))
                 return False
 
-        elif event == "player-moved":
+        elif event == "player-moved" or event == "player-won":
             print("Storing message in Redis")
             await self.redis_client.zadd(self.group_name, {text_data: timestamp})
 
@@ -220,12 +228,15 @@ class GameConsumer(AsyncWebsocketConsumer):
         """
         status = await self.store_message_in_redis(event, text_data)
 
+        print (f"status: {status}")
         if status:
             json_data = json.loads(text_data)
 
             await self.channel_layer.group_send(
                 self.group_name, {"type": "news.broadcast", "message": json_data}
             )
+
+            print("message sent successfully")
 
         return status
 
