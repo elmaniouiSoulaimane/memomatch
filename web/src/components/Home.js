@@ -244,6 +244,10 @@ class Home extends Component {
                     });
                 }
             }
+
+            if(update.includes("won")){
+                this.setState({gameCompleted: true})
+            }
         });
     }
 
