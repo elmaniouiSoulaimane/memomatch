@@ -32,6 +32,7 @@ class Room extends React.Component {
                             mainPlayer={this.props.mainPlayer}
                             players={this.props.players} 
                             setPlayers={this.props.setPlayers}
+                            gameCompleted={this.props.gameCompleted}
                         />
                     </div>
                     <div className={styles.leaderboard}>

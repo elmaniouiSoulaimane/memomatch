@@ -34,20 +34,21 @@ class Tabs extends Component {
   handleCardClick = (index) => {
     console.log("In handleCardClick")
 
-    this.playSound(0)
-
     //PROPS
-    const {setPlayers, players, ws} = this.props
+    const {setPlayers, players, ws, gameCompleted} = this.props
+
+    if (gameCompleted) return
 
     //STATE
     // let {activePlayerIndex, flippedCards} = this.state
+    
     let currentCard = players[this.state.activePlayerIndex].cards[index];
 
     let newFlippedCards = [...this.state.flippedCards, {"card": currentCard, "index":index}];
 
     //if player clicked on a non-flipped card and he has not yet reached two flipped cards
     if (!currentCard.flipped && this.state.flippedCards.length < 2) {
-
+      this.playSound(0)
       
       const {updatedPlayers} = this.updatePlayerFlippedCard(players, this.state.activePlayerIndex, index, currentCard, newFlippedCards, setPlayers, ws)
       
@@ -65,21 +66,25 @@ class Tabs extends Component {
       
       //if player clicked on a non-flipped card and he has reached two flipped cards
     } else if (!currentCard.flipped && this.state.flippedCards.length === 2) {
-        this.handleThirdCardClick(players, currentCard, index, setPlayers, ws)
+      this.playSound(0)
+      this.handleThirdCardClick(players, currentCard, index, setPlayers, ws)
     }
 
     if (this.allCardsFlipped(players)) {
       this.playSound(3)
+      let ws_event = "player-won"
+      let ws_update = "Player " + players[this.state.activePlayerIndex].user_name + " won"
+      let ws_player = players[this.state.activePlayerIndex]
+      this.sendWebSocketMessage(ws, ws_event, ws_update, ws_player)
     }
-      
   };
 
-  sendWebSocketMessage = (ws, update, player) => {
+  sendWebSocketMessage = (ws, event, update, player) => {
     console.log("In sendWebSocketMessage")
     ws.send(
       JSON.stringify(
-        { 
-          "event": "player-moved", 
+        {
+          "event": event, 
           "update": update,
           "player": player
         }
@@ -101,7 +106,7 @@ class Tabs extends Component {
     })
     setPlayers(updatedPlayers);
 
-    this.sendWebSocketMessage(ws, update, updatedPlayers[activePlayerIndex]);
+    this.sendWebSocketMessage(ws, "player-moved", update, updatedPlayers[activePlayerIndex]);
 
     return {updatedPlayers: updatedPlayers}
   };
@@ -118,7 +123,7 @@ class Tabs extends Component {
     
     setPlayers(updatedPlayers);
 
-    this.sendWebSocketMessage(ws, update, updatedPlayers[activePlayerIndex]);
+    this.sendWebSocketMessage(ws, "player-moved", update, updatedPlayers[activePlayerIndex]);
 
     setTimeout(() => {
       this.setState({ flippedCards: [] });
@@ -134,7 +139,7 @@ class Tabs extends Component {
       updatedPlayers[activePlayerIndex].cards[card2.index].flipped = false;
       
       let update = "Player " + players[activePlayerIndex].user_name + " flipped " + currentCard.name + " a non-matching card, no points."
-      this.sendWebSocketMessage(ws, update, updatedPlayers[activePlayerIndex]);
+      this.sendWebSocketMessage(ws,  "player-moved", update, updatedPlayers[activePlayerIndex]);
 
       this.setState((state) => {
         return { flippedCards: [] };
@@ -157,7 +162,7 @@ class Tabs extends Component {
 
     let update = "Player " + updatedPlayers[this.state.activePlayerIndex].user_name + " flipped " + currentCard.name + " card."
 
-    this.sendWebSocketMessage(ws, update, updatedPlayers[this.state.activePlayerIndex])
+    this.sendWebSocketMessage(ws,  "player-moved", update, updatedPlayers[this.state.activePlayerIndex])
 
     setTimeout(() => {
       this.setState({ flippedCards: newFlippedCards });

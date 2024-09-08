@@ -20,7 +20,8 @@ class Home extends Component {
         players: [],
         news: [],
         roomName: '',
-        isRoomAdmin: false
+        isRoomAdmin: false,
+        gameCompleted: false
       };
     }
 
@@ -100,6 +101,10 @@ class Home extends Component {
     
                 if (jsonData.message.event === 'player-quit'){
                     this.handlePlayerQuit(jsonData.message)
+                }
+
+                if (jsonData.message.event === 'player-won'){
+                    this.handlePlayerWon(jsonData.message)
                 }
             }
         }
@@ -234,14 +239,14 @@ class Home extends Component {
 
                 //updates the action of the player that is in the players state variable
                 const updatedPlayers = players.map(item => (item.user_name === player.user_name ? { ...item, ...player } : item));
-
+                
                 if (update.includes("+20Pts")){
                     return {
                         players: updatedPlayers,
                         news: [ ...news, { "update": update, "player": player }]
                     }
                 }else{
-                return {
+                    return {
                         players: updatedPlayers
                     }
                 }
@@ -259,6 +264,30 @@ class Home extends Component {
                 players: updatedPlayers
             });
         }
+    }
+
+    handlePlayerWon = (message) => {
+        console.log("In handlePlayerWon", message)
+
+        this.setState(prevState => {
+            const { players, mainPlayer, news } = prevState;
+            const { player, update } =  message
+
+            let updatedPlayers = players
+
+            if (player.user_name !== mainPlayer.user_name){
+                updatedPlayers = players.map(item => (item.user_name === player.user_name ? { ...item, ...player } : item));
+                return {
+                    players: updatedPlayers,
+                    gameCompleted: true,
+                    news: [...news, { "update": update, "player": player }]
+                }
+            }
+            return {
+                players: updatedPlayers,
+                gameCompleted: true
+            }
+        });
     }
 
     setPlayers = (players) => {
@@ -310,6 +339,7 @@ class Home extends Component {
                         setPlayers={this.setPlayers} 
                         news={this.state.news}
                         roomName={this.state.roomName}
+                        gameCompleted={this.state.gameCompleted}
                     />
                 </StepWizard>
             </div>
