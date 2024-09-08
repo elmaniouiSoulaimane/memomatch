@@ -235,9 +235,15 @@ class Home extends Component {
                 //updates the action of the player that is in the players state variable
                 const updatedPlayers = players.map(item => (item.user_name === player.user_name ? { ...item, ...player } : item));
 
+                if (!update.includes("+20Pts")){
+                    return {
+                        players: updatedPlayers
+                    }
+                }else{
                 return {
                     players: updatedPlayers,
                     news: [ ...news, { "update": update, "player": player }]
+                    }
                 }
             }
         });
