@@ -142,7 +142,7 @@ class Tabs extends Component {
       this.setState((state) => {
         return { flippedCards: [] };
       });
-    }, 1500);
+    }, 800);
   };
 
   handleThirdCardClick = (players, currentCard, index, setPlayers, ws) => {
