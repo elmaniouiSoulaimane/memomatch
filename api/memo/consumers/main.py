@@ -107,7 +107,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                     #}
                     # }))
 
-    async def receive(self, text_data=None, bytes_data=None):
+    async def receive(self, text_data:json =None, bytes_data=None):
         """
         Receives data from the client and processes it based on the event type.
 
@@ -135,15 +135,16 @@ class GameConsumer(AsyncWebsocketConsumer):
         print("In receive")
 
         if text_data:
-            json_data = json.loads(text_data)
-            event = json_data['event']
-
+            data_dict = json.loads(text_data)
+            event = data_dict['event']
             print("Event: %s" % event)
+
             if event == "player-joined":
                 is_duplicate_msg = await self.is_duplicate_message(text_data)
                 print("Duplicate message: %s" % is_duplicate_msg)
+
                 if not is_duplicate_msg:
-                    status = await self.save_player_event("player-joined", text_data)
+                    status = await self.save_player_event("player-joined", text_data, data_dict)
 
                     if status:
                         await self.send(text_data=json.dumps({
@@ -155,13 +156,13 @@ class GameConsumer(AsyncWebsocketConsumer):
                         await self.send_all_room_messages()
 
             if event == "player-moved":
-                await self.save_player_event(event, text_data)
+                await self.save_player_event(event, text_data, data_dict)
 
             if event == "player-quit":
-                await self.save_player_event(event, text_data)
+                await self.save_player_event(event, text_data, data_dict)
 
             if event == "player-won":
-                await self.save_player_event(event, text_data)
+                await self.save_player_event(event, text_data, data_dict)
 
 
         else:
@@ -172,9 +173,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         # Close Redis connection
         await self.redis_client.close()
 
-    # ------------------------------------------------------------------------------------------------------------------
     # ADD OPERATIONS
-    async def store_message_in_redis(self, event: str, text_data) -> bool:
+    async def store_message_in_redis(self, event: str, data: json, data_dict: dict=None) -> bool:
         """
         Store the given text data in Redis for the specified room.
 
@@ -188,37 +188,34 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         # Using time so that I can sort messages by timestamp
         timestamp = time()
-        data = json.loads(text_data)
 
         if event == "player-joined":
 
-            user_exists = await self.username_exists(data['player']['user_name'])
+            user_exists = await self.username_exists(data_dict['player']['user_name'])
 
             if not user_exists:
-                print("""User %s doesn't exist""" % data['player']['user_name'])
+                print("""User %s doesn't exist""" % data_dict['player']['user_name'])
                 print("Storing message in Redis")
-                await self.redis_client.zadd(self.group_name, {text_data: timestamp})
-                # Also store the mapping between channel_name and text_data
-                await self.redis_client.hset(f"user_data:{self.group_name}", self.channel_name, text_data)
+                await self.redis_client.zadd(self.group_name, {f'{self.channel_name}:{data}': timestamp})
 
                 return True
             else:
-                print("""User %s exists""" % data['player']['user_name'])
+                print("""User %s exists""" % data_dict['player']['user_name'])
                 print("Please use a unique username")
                 await self.send(text_data=json.dumps({
                     "error": {
-                        "message": "User with name %s already exists" % data['player']['user_name']
+                        "message": "User with name %s already exists" % data_dict['player']['user_name']
                     }
                 }))
                 return False
 
         elif event == "player-moved" or event == "player-won":
             print("Storing message in Redis")
-            await self.redis_client.zadd(self.group_name, {text_data: timestamp})
+            await self.redis_client.zadd(self.group_name, {f'{self.channel_name}:{data}': timestamp})
 
             return True
 
-    async def save_player_event(self, event: str, text_data) -> bool:
+    async def save_player_event(self, event: str, data: json, data_dict: dict= None) -> bool:
         """
         Save the player event by storing the message in Redis, parsing the text data to JSON, and sending a group message with the JSON data.
 
@@ -226,14 +223,13 @@ class GameConsumer(AsyncWebsocketConsumer):
             room_name (str): The name of the room where the event occurred.
             text_data (str): The text data containing information about the event.
         """
-        status = await self.store_message_in_redis(event, text_data)
+        status = await self.store_message_in_redis(event, data, data_dict)
 
+        # TODO: seperate the following code into a separate function
         print (f"status: {status}")
         if status:
-            json_data = json.loads(text_data)
-
             await self.channel_layer.group_send(
-                self.group_name, {"type": "news.broadcast", "message": json_data}
+                self.group_name, {"type": "news.broadcast", "message": data_dict}
             )
 
             print("message sent successfully")
@@ -243,7 +239,7 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def add_user_to_group(self):
         print("Adding user to group %s" % self.group_name)
         print(f"channel name: {self.channel_name}")
-        await self.redis_client.sadd(f"group:{self.group_name}", self.channel_name)
+        await self.redis_client.sadd(f"{self.group_name}:members", self.channel_name)
         await self.channel_layer.group_add(
             self.group_name,
             self.channel_name
@@ -253,19 +249,16 @@ class GameConsumer(AsyncWebsocketConsumer):
     # ------------------------------------------------------------------------------------------------------------------
     # DELETE OPERATIONS
     async def remove_user_from_group(self):
-        await self.redis_client.srem(f"group:{self.group_name}", self.channel_name)
+        await self.redis_client.srem(f"{self.group_name}:members", self.channel_name)
 
+        # Step 1: Retrieve all elements from the sorted set
+        elements = await self.redis_client.zrange(self.group_name, 0, -1)
 
-        # Retrieve the user-specific data using the channel_name
-        text_data = await self.redis_client.hget(f"user_data:{self.group_name}", self.channel_name)
-
-        if text_data:
-            # Remove the user-specific data from the sorted set
-            await self.redis_client.zrem(self.group_name, text_data)
-            # Remove the mapping
-            await self.redis_client.hdel(f"user_data:{self.group_name}", self.channel_name)
-            print(f"User data for channel {self.channel_name} removed from group {self.group_name}")
-
+        # Step 2: Identify the elements that belong to the specific channel_name
+        for element in elements:
+            if element.startswith(f'{self.channel_name}:'):
+                # Step 3: Remove the element from the sorted set
+                await self.redis_client.zrem(self.group_name, element)
 
         # Remove the channel from the group
         await self.channel_layer.group_discard(
@@ -277,7 +270,7 @@ class GameConsumer(AsyncWebsocketConsumer):
     # ------------------------------------------------------------------------------------------------------------------
     # CHECK OPERATIONS
     async def group_exists(self) -> bool:
-        result = await self.redis_client.exists(f"group:{self.group_name}")
+        result = await self.redis_client.exists(self.group_name)
         if result:
             print("Room %s exists" % self.group_name)
             return True
@@ -286,7 +279,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             return False
 
     async def is_user_in_group(self):
-        result = await self.redis_client.sismember(f"group:{self.group_name}", self.channel_name)
+        result = await self.redis_client.sismember(f"{self.group_name}:members", self.channel_name)
         print(f"channel name: {self.channel_name}")
         if result:
             print("User is in group %s" % self.group_name)
@@ -295,18 +288,21 @@ class GameConsumer(AsyncWebsocketConsumer):
             print("""User is not in group %s""" % self.group_name)
             return False
 
-    async def username_exists(self, username) -> bool:
+    async def username_exists(self, username: str) -> bool:
         # Get all members of the sorted set
-        members = await self.redis_client.zrange(self.group_name, 0, -1)
+        elements = await self.redis_client.zrange(self.group_name, 0, -1)
 
         # Iterate through the members to check if the username exists
-        for member in members:
-            data = json.loads(member)
-            if data['player']['user_name'] == username:
+        for element in elements:
+            channel, data = element.split(':', 1)
+            data_dict = json.loads(data)
+            print("=====> member: %s" % data_dict['player']['user_name'])
+            print("=====> against username: %s" % username)
+            if data_dict['player']['user_name'] == username:
                 return True
         return False
 
-    async def is_duplicate_message(self, text_data) -> bool:
+    async def is_duplicate_message(self, data: json) -> bool:
         """
         Check if a message is a duplicate by checking if it exists in the Redis set for the given room.
 
@@ -317,7 +313,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         Returns:
             bool: True if the message is a duplicate, False otherwise.
         """
-        result = await self.redis_client.zscore(self.group_name, text_data)
+        result = await self.redis_client.zscore(self.channel_name, data)
         if result:
             print("Message is a duplicate")
             return True
@@ -327,9 +323,8 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     # ------------------------------------------------------------------------------------------------------------------
     # SEND OPERATIONS
-    async def news_broadcast(self, event):
-        message = event["message"]
-        await self.send(text_data=json.dumps({"message": message}))
+    async def news_broadcast(self, event: dict):
+        await self.send(text_data=json.dumps(event))
 
     async def send_all_room_messages(self):
         """
@@ -345,20 +340,30 @@ class GameConsumer(AsyncWebsocketConsumer):
         """
         print("""Sending all room messages to room %s""" % self.group_name)
         all_messages = await self.redis_client.zrange(self.group_name, 0, -1)
+        valid_messages = []
 
-        try:
-            all_messages = [json.loads(message) for message in all_messages]
-        except (json.JSONDecodeError, UnicodeDecodeError) as e:
-            # Handle JSON decoding or Unicode decoding errors
-            print(f"Error decoding message: {e}")
-            all_messages = []
+        for message in all_messages:
+            if message.strip():  # Check if the message is not empty or just whitespace
+                try:
+                    # Split the message into channel and data
+                    _, data = message.split(':', 1)  # Extract only the 'data' part
 
+                    print(f"====> message: {data}")
+                    print(f"====> type of message: {type(data)}")
+                    valid_messages.append(json.loads(data))  # Append data (already JSON) directly
+
+                except ValueError as e:
+                    print(f"Error splitting message: {e}, message: {message}")
+
+            else:
+                print("Empty message encountered, skipping.")
+
+        # Prepare the message to broadcast to the room
         message = {
             "event": "player-catch-up",
-            "all_messages": all_messages
+            "all_messages": valid_messages  # Data already in JSON format
         }
 
-        # print(f"Sending message: {message}")
         try:
             await self.channel_layer.group_send(
                 self.group_name, {"type": "news.broadcast", "message": message}
