@@ -1,4 +1,6 @@
 import json
+import bcrypt
+
 from time import time
 
 import aioredis
@@ -94,18 +96,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                     # I accept because he chose join and for now there's no mechanism that checks for a passkey
                     await self.add_user_to_group()
                     await self.accept()
-                    await self.send(text_data=json.dumps({
-                        "success": {
-                            "type": "joined-room",
-                            "message": "Access denied, room already exists and you're not a member, but we're making an exception for you"
-                        }
-                    }))
-                    # await self.send(text_data=json.dumps({
-                    #     "error": {
-                    #         "type": "access-denied",
-                    #         "message": "Access denied, room already exists and you're not a member"
-                    #}
-                    # }))
 
     async def receive(self, text_data:json =None, bytes_data=None):
         """
@@ -138,6 +128,12 @@ class GameConsumer(AsyncWebsocketConsumer):
             data_dict = json.loads(text_data)
             event = data_dict['event']
             print("Event: %s" % event)
+
+            if event == "authenticate":
+                step = data_dict['step']
+                password = data_dict['password']
+
+                await self.authenticate(step, password)
 
             if event == "player-joined":
                 is_duplicate_msg = await self.is_duplicate_message(text_data)
@@ -172,6 +168,33 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.remove_user_from_group()
         # Close Redis connection
         await self.redis_client.close()
+
+    async def authenticate(self, step: str, provided_password: str) -> None:
+        """Authenticate the user"""
+        if step == "create":
+            hashed_password = bcrypt.hashpw(provided_password.encode('utf-8'), bcrypt.gensalt())
+            await self.redis_client.set(f'room:{self.group_name}:password', hashed_password)
+            await self.send(text_data=json.dumps({
+                "success": {
+                        "type": "room-created",
+                        "message": 'Room "%s" created successfully' % self.group_name
+                }
+            }))
+        if step == "join":
+            stored_hashed_password = await self.redis_client.get(f'room:{self.group_name}:password')
+            if bcrypt.checkpw(provided_password.encode('utf-8'), stored_hashed_password.encode('utf-8')):
+                await self.send(text_data=json.dumps({
+                    "success": {
+                        "type": "joined-room",
+                        "message": "Joined room %s" % self.group_name
+                    }
+                }))
+            else:
+                await self.send(text_data=json.dumps({
+                    "error": {
+                        "message": "Invalid password"
+                    }
+                }))
 
     # ADD OPERATIONS
     async def store_message_in_redis(self, event: str, data: json, data_dict: dict=None) -> bool:
