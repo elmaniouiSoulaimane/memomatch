@@ -6,12 +6,14 @@ import { Store } from 'react-notifications-component';
 class RoomDetailsStep extends Component {
   constructor(props) {
     super(props);
-    this.mainInputRef = createRef();
+    this.RoomNameRef = createRef();
+    this.RoomPasswordRef = createRef();
     this.state = {
       roomName: '',
+      roomPassword: '',
       errorMessage: '',
       wsConnected: false,
-      isNextButtonDisabled: true,
+      isNextButtonDisabled: false,
     };
   }
 
@@ -40,13 +42,32 @@ class RoomDetailsStep extends Component {
     } else {
       this.setState({
         errorMessage: 'Only normal characters, numbers, and underscores are allowed.',
-        isNextButtonDisabled: true
+      });
+    }
+  }
+
+  validatePassword = (event) => {
+    const { value } = event.target;
+    const regex = /^(?!.*['"`;])[\w!@#$%^&*()_+={}\[\]|\\:;,.<>?~`-]{4,}$/;
+
+    if (regex.test(value)) {
+      this.setState({
+        roomPassword: value,
+        errorMessage: '',
+        wsConnected: false
+      });
+
+    } else {
+      this.setState({
+        roomPassword: value,
+        errorMessage: 'Password must be at least 4 characters long',
       });
     }
   }
  
   handleClick = () => {    
-    if (this.state.roomName !== '' && this.state.errorMessage === ''){
+    if (this.state.roomName !== '' && this.state.roomPassword !== '' && this.state.errorMessage === ''){
+      console.log("passed validation")
       if (this.state.wsConnected === false) {
         let ws = null
         if (this.props.isRoomAdmin) {
@@ -57,7 +78,11 @@ class RoomDetailsStep extends Component {
 
         ws.onopen = (success) => {
           console.log("Websocket connection opened")
-
+          ws.send(JSON.stringify({
+            event: 'authenticate',
+            step: this.props.isRoomAdmin ? 'create' : 'join',
+            password: this.state.roomPassword
+          }));
           this.props.setRoomName(this.state.roomName)
           this.props.setWebSocket(ws);
           this.setState({ wsConnected: true });
@@ -84,6 +109,14 @@ class RoomDetailsStep extends Component {
       }else{
         this.props.nextStep();
       }
+    }else if (this.state.roomName === '') {
+      this.setState({
+        errorMessage: 'Please provide a room name'
+      })
+    }else if (this.state.roomPassword === '') {
+      this.setState({
+        errorMessage: 'Please provide a password'
+      })
     }
   }
 
@@ -91,6 +124,7 @@ class RoomDetailsStep extends Component {
     //set input value to empty string
     this.setState({
       roomName: '',
+      roomPassword: '',
       errorMessage: '',
       isNextButtonDisabled: true
     });
@@ -104,13 +138,37 @@ class RoomDetailsStep extends Component {
         <div className={styles.step}>
           <h2>Step 2: Share Room name</h2>
           <div className={styles.formContainer}> 
+            <>
             <span>Please provide the room's name: </span>
             <input
               type="text"
-              ref={this.mainInputRef}
+                ref={this.RoomNameRef}
               onChange={this.validateInput}
               value={this.state.roomName}
             />
+            </>
+            {this.props.isRoomAdmin ? (
+              <>
+                <span>Please provide a password: </span>
+                <input
+                  type="text"
+                  ref={this.RoomPasswordRef}
+                  onChange={this.validatePassword}
+                  value={this.state.roomPassword}
+                />
+              </>
+            ):
+            (
+              <>
+                <span>Please provide this room's password: </span>
+                <input
+                  type="text"
+                  ref={this.RoomPasswordRef}
+                  onChange={this.validatePassword}
+                  value={this.state.roomPassword}
+                />
+              </>
+            )}
           </div>
           {this.state.errorMessage && <p style={{ color: 'red' }}>{this.state.errorMessage}</p>}
 
