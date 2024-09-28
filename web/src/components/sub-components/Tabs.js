@@ -181,7 +181,7 @@ class Tabs extends Component {
     const {activePlayerIndex, audioRefs, audios} = this.state
 
     return (
-      <div>
+      <div className={styles.cardsColumn}>
         <div className={styles.tabs}>
           {players.map((player, index) => (
             <button

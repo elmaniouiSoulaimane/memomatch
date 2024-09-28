@@ -1,14 +1,19 @@
+.step{
+    text-align: center;
+    height: 90vh;
+}
+
 .roomContainer{
+    height: 95%;
+    width: 100%;
     display: flex;
     flex-direction: row;
-    height: 100vh;
-    width: 100vw;
 }
 
 
-.cardsColumn{
+.mainColumnContainer{
+    height: 100%;
     width: 50%;
-    height: fit-content;
     background-color: #bea1f7;
 }
 
@@ -58,26 +63,50 @@
 
 .leaderboard{
     width: 25%;
-    height: 100vh;
 }
 
-.cardsContainer{
+.cardsContainer {
+    height: 80%;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-evenly;
-    padding: 10%;
-    max-height: 100vh;
+    padding: 5%;
+    row-gap: 20px;
 }
 
-.card{
-    width: 75px;
-    height: 125px;
-    overflow: hidden;
-    margin: 0 0 25px 20px;
+.card {
+    position: relative; /* Needed for the shadow to position relative to the card */
+    width: 19.5%;
+    height: 20.5%;
     padding: 0;
     border: none;
     background-color: #bea1f7;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    bottom: -5px; /* Keep the shadow at the "ground" */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%; /* Adjust shadow width */
+    height: 8px; /* Adjust shadow height */
+    background: rgba(0, 0, 0, 0.3); /* Shadow color */
+    border-radius: 50%; /* Make the shadow round */
+    transition: transform 0.3s ease, opacity 0.3s ease; /* Smooth shadow transition */
+    z-index: -1; /* Keep the shadow behind the card */
+    transition: transform 0.3s ease; /* Smooth floating effect */
+}
+
+.card:hover {
+    transform: translateY(-10px); /* Card floats */
+}
+
+
+.card:hover::before {
+    transform: translateX(-50%) scale(1.2); /* Shadow grows larger */
+    opacity: 0.5; /* Shadow becomes lighter */
 }
 
 .inner {
@@ -86,6 +115,7 @@
     transition: transform 0.6s;
     transform-style: preserve-3d;
 }
+
 
 .flipped .inner {
     transform: rotateY(180deg);
@@ -99,6 +129,16 @@
   backface-visibility: hidden;
 }
 
+.front img, .back img {
+    height: 100%;
+    transition: transform 0.3s ease; /*Applies to hover as well */
+}
+
+.front img:hover, .back img:hover {
+    cursor: pointer;
+    transform: translateY(-10px);
+}
+
 .back {
     z-index: 2;
 }
@@ -107,16 +147,17 @@
     transform: rotateY(180deg);
 }
 
-/* .card img{
-    width: 75px;
-    height: 125px;
-    object-fit: cover;
-} */
 
 /* ////////////////////////// */
 .newsBroadcast, .leaderboard{
-    width: 25vw;
+    height: 95%;
+    width: 25%;
     padding: 20px;
+    overflow-y: scroll;
+}
+
+.cardsColumn{
+    height: 100%;
 }
 
 .update, .playerInfo{
@@ -140,12 +181,10 @@
 }
 
 .updates{
-    overflow-y: scroll;
-    max-height: 100vh ;
 }
 
 .tabs{
-    height: fit-content;
+    height: 7%;
     display: flex;
     flex-direction: row;
 }
@@ -186,5 +225,4 @@
     text-align: center;
     width: 100vw;
     display: block;
-    margin-bottom: 25px;
 }

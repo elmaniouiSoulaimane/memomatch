@@ -15,7 +15,7 @@ class Room extends React.Component {
     render() {
         let roomName = this.props.roomName
         return (
-            <>
+            <div className={styles.step}>
                 <span className={styles.roomTitle}>Room: {roomName}</span>
                 <div className={styles.roomContainer}>
                     <div className={styles.newsBroadcast}>
@@ -26,7 +26,7 @@ class Room extends React.Component {
                             news={this.props.news}
                         />
                     </div>
-                    <div className={styles.cardsColumn}>
+                    <div className={styles.mainColumnContainer}>
                         <Tabs 
                             ws={this.props.ws} 
                             mainPlayer={this.props.mainPlayer}
@@ -41,7 +41,7 @@ class Room extends React.Component {
                         />
                     </div>
                 </div>
-            </>
+            </div>
         );
     }
 }
