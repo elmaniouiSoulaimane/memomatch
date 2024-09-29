@@ -17,15 +17,15 @@ class RoomDetailsStep extends Component {
     };
   }
 
-  componentDidUpdate(prevProps) {
-    // Check if the step has just become active
-    if (!prevProps.isActive && this.props.isActive) {
-      // Focus the input element if the step is now active
-      if (this.mainInputRef.current) {
-        this.mainInputRef.current.focus();
-      }
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   // Check if the step has just become active
+  //   if (!prevProps.isActive && this.props.isActive) {
+  //     // Focus the input element if the step is now active
+  //     if (this.RoomNameRef.current) {
+  //       this.RoomNameRef.current.focus();
+  //     }
+  //   }
+  // }
   
   validateInput = (event) => {
     const { value } = event.target;
@@ -35,7 +35,6 @@ class RoomDetailsStep extends Component {
       this.setState({
         roomName: value,
         errorMessage: '',
-        isNextButtonDisabled: false,
         wsConnected: false
       });
 
@@ -134,50 +133,48 @@ class RoomDetailsStep extends Component {
 
   render() {
     return (
-      <>
-        <div className={styles.step}>
-          <h2>Step 2: Share Room name</h2>
-          <div className={styles.formContainer}> 
-            <>
+      <div className={styles.step}>
+        <h2>Step 2: Share Room name</h2>
+        <div className={styles.formContainer}> 
+          <>
             <span>Please provide the room's name: </span>
             <input
               type="text"
-                ref={this.RoomNameRef}
+              ref={this.RoomNameRef}
               onChange={this.validateInput}
               value={this.state.roomName}
             />
+          </>
+          {this.props.isRoomAdmin ? (
+            <>
+              <span>Please provide a password: </span>
+              <input
+                type="text"
+                ref={this.RoomPasswordRef}
+                onChange={this.validatePassword}
+                value={this.state.roomPassword}
+              />
             </>
-            {this.props.isRoomAdmin ? (
-              <>
-                <span>Please provide a password: </span>
-                <input
-                  type="text"
-                  ref={this.RoomPasswordRef}
-                  onChange={this.validatePassword}
-                  value={this.state.roomPassword}
-                />
-              </>
-            ):
-            (
-              <>
-                <span>Please provide this room's password: </span>
-                <input
-                  type="text"
-                  ref={this.RoomPasswordRef}
-                  onChange={this.validatePassword}
-                  value={this.state.roomPassword}
-                />
-              </>
-            )}
-          </div>
-          {this.state.errorMessage && <p style={{ color: 'red' }}>{this.state.errorMessage}</p>}
-
-          <div className={styles.btnsContainer}>
-            <button onClick={this.previousStep} className={styles.prevBtn}>Previous</button>
-            <button onClick={this.handleClick} className={styles.nextBtn} disabled={this.state.isNextButtonDisabled}>Next</button>
-          </div>
+          ):
+          (
+            <>
+              <span>Please provide this room's password: </span>
+              <input
+                type="text"
+                ref={this.RoomPasswordRef}
+                onChange={this.validatePassword}
+                value={this.state.roomPassword}
+              />
+            </>
+          )}
         </div>
-      </>
+        {this.state.errorMessage && <p style={{ color: 'red' }}>{this.state.errorMessage}</p>}
+
+        <div className={styles.btnsContainer}>
+          <button onClick={this.previousStep} className={styles.prevBtn}>Previous</button>
+          <button onClick={this.handleClick} className={styles.nextBtn} disabled={this.state.isNextButtonDisabled}>Next</button>
+        </div>
+      </div>
     );
   }
 }

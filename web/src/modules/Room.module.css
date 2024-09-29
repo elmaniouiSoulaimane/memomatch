@@ -89,13 +89,13 @@
 
 .card:hover, .card:hover {
     cursor: pointer;
-    transform: translateY(-10px);
+    transform: translateY(-20px);
 }
 
 .card::before, .card::before {
     content: '';
     position: absolute;
-    bottom: -20px; /* Keep the shadow at the "ground" */
+    bottom: 0px; /* Keep the shadow at the "ground" */
     left: 50%;
     transform: translateX(-50%) translateY(100%);
     width: 80%; /* Adjust shadow width */
@@ -108,7 +108,7 @@
 
 
 .card:hover::before, .card:hover::before {
-    transform: translateX(-50%) translateY(100%) scale(1.2); /* Shadow grows larger */
+    transform: translateX(-50%) translateY(300%) scale(1.2); /* Shadow grows larger */
     opacity: 0.5; /* Shadow becomes lighter */
 }
 
