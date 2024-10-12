@@ -12,7 +12,7 @@
 
 
 .mainColumnContainer{
-    height: 100%;
+    height: fit-content;
     width: 50%;
     background-color: #bea1f7;
 }
@@ -67,49 +67,67 @@
 }
 
 .cardsContainer {
-    height: 85%;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    row-gap: 20px;
-    padding: 20px;
+    height: auto; /* Better for responsiveness */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 120px); /* Fixed width for each item */
+    padding: 5%;
+    row-gap: 30px;
+    justify-content: center;
+    justify-items: center;
+}
+
+@media (max-width: 1000px) {
+    .cardsContainer {
+        grid-template-columns: repeat(4, 1fr); /* 3 cards per row */
+    }
+}
+
+@media (max-width: 768px) {
+    .cardsContainer {
+        grid-template-columns: repeat(3, 1fr); /* 3 cards per row */
+    }
+}
+
+@media (max-width: 480px) {
+    .cardsContainer {
+        grid-template-columns: repeat(2, 1fr); /* 2 cards per row */
+    }
 }
 
 .card {
-    height: 20.5%;
-    width: 86px;
+    height: auto; /* Allow the card to adjust */
+    min-height: 120px; /* Set a minimum height for visibility */
+    max-width: 120px; /* Limit the maximum width */
+    min-width: 80px; /* Limit the minimum width */
     border: none;
     background-color: #bea1f7;
     padding: 0;
-
-    position: relative; /* Needed for the shadow to position relative to the image */
-    transition: transform 0.3s ease; /*Applies to hover as well */
+    position: relative;
+    transition: transform 0.3s ease;
 }
 
-.card:hover, .card:hover {
+.card:hover {
     cursor: pointer;
-    transform: translateY(-20px);
+    transform: translateY(-15px);
 }
 
-.card::before, .card::before {
+.card::before {
     content: '';
     position: absolute;
-    bottom: 0px; /* Keep the shadow at the "ground" */
+    bottom: 0;
     left: 50%;
     transform: translateX(-50%) translateY(100%);
-    width: 80%; /* Adjust shadow width */
-    height: 8px; /* Adjust shadow height */
-    background: rgba(0, 0, 0, 0.3); /* Shadow color */
-    border-radius: 100%; /* Make the shadow round */
-    transition: transform 0.3s ease, opacity 0.3s ease; /* Smooth shadow transition */
-    z-index: -1; /* Keep the shadow behind the card */
+    width: 80%; 
+    height: 8px; 
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 100%;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    z-index: -1;
 }
 
-
-.card:hover::before, .card:hover::before {
-    transform: translateX(-50%) translateY(300%) scale(1.2); /* Shadow grows larger */
-    opacity: 0.5; /* Shadow becomes lighter */
+.card:hover::before {
+    transform: translateX(-50%) translateY(250%) scale(1.2);
+    opacity: 0.5; 
 }
 
 .inner {
@@ -119,28 +137,28 @@
     transform-style: preserve-3d;
 }
 
-
 .flipped .inner {
     transform: rotateY(180deg);
 }
 
 .front,
 .back {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  backface-visibility: hidden;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    backface-visibility: hidden;
 }
 
 .front img, .back img {
     width: 100%;
     height: 100%;
+    object-fit: contain;
 }
 
 .back {
     z-index: 2;
 }
-  
+
 .front {
     transform: rotateY(180deg);
 }
@@ -182,7 +200,7 @@
 }
 
 .tabs{
-    height: 7%;
+    height: 5%;
     display: flex;
     flex-direction: row;
 }
@@ -223,4 +241,15 @@
     text-align: center;
     width: 100vw;
     display: block;
+}
+
+@media (max-width: 700px) {
+    .newsBroadcast, .leaderboard {
+        display: none;
+    }
+
+    .mainColumnContainer {
+        width: 90%;
+        margin: 0 auto;
+    }
 }
