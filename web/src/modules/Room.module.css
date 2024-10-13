@@ -1,5 +1,4 @@
 .step{
-    text-align: center;
     height: 90vh;
 }
 
@@ -14,11 +13,12 @@
 .mainColumnContainer{
     height: fit-content;
     width: 50%;
-    background-color: #bea1f7;
+    background-color: #F8B179;
+    border-radius: 10px;
 }
 
 .tab, .activeTab{
-    background-color: #bea1f7;
+    background-color: #7289c0;
     padding: 10px;
     width:fit-content;
     overflow: hidden;
@@ -35,12 +35,12 @@
 }
 
 .tab:hover, .activeTab:hover{
-    background-color: #8d5bf1;
+    background-color: #495083;
     cursor: pointer;
 }
 
 .activeTab{
-    background-color: #5E17EB;
+    background-color: #2E3251;
 }
 
 .tab img, .activeTab img, .update img, .playerCard img{
@@ -70,7 +70,7 @@
     height: auto; /* Better for responsiveness */
     display: grid;
     grid-template-columns: repeat(auto-fit, 120px); /* Fixed width for each item */
-    padding: 5%;
+    padding: 20px;
     row-gap: 30px;
     justify-content: center;
     justify-items: center;
@@ -98,9 +98,9 @@
     height: auto; /* Allow the card to adjust */
     min-height: 120px; /* Set a minimum height for visibility */
     max-width: 120px; /* Limit the maximum width */
-    min-width: 80px; /* Limit the minimum width */
+    min-width: 72px; /* Limit the minimum width */
     border: none;
-    background-color: #bea1f7;
+    background-color: #F8B179;
     padding: 0;
     position: relative;
     transition: transform 0.3s ease;
@@ -169,7 +169,8 @@
     height: 95%;
     width: 25%;
     padding: 20px;
-    overflow-y: scroll;
+    overflow-y: auto;
+    box-sizing: content-box;
 }
 
 .cardsColumn{
@@ -183,20 +184,17 @@
     justify-content: flex-start;
     align-items: center;
     height: fit-content;
-    background-color: #c7deeb;
+    background-color: #676F9D;
     border-radius: 10px;
     margin-top: 20px;
 }
 
 .tabTitle, .lbtitle, .roomTitle{
-    color:#22495F;
+    color:#676F9D;
     font-weight: bold;
     font-size: 25px;
     font-family: var(--p-font-family);
 
-}
-
-.updates{
 }
 
 .tabs{
@@ -220,7 +218,7 @@
     padding: 15px;
     width: 200px;
     margin: 0 0 0 10px;
-    background-color: #ff9980;
+    background-color: #F8B179;
 }
 
 .playerCard img{
@@ -233,7 +231,7 @@
 }
 
 .lbtitle{
-    color: #b32400;
+    color: #F8B179;
 }
 
 .roomTitle{

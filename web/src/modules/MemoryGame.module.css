@@ -9,6 +9,7 @@
     height:10%;
     text-align: center;
     margin: 0 !important;
+    color: white;
 }
 
 .wizard{
@@ -19,6 +20,13 @@
 h2{
     font-size: 25px;
     margin: 0;
+    color: white;
+    text-align: start;
+}
+
+span{
+    color: white;
+    text-align: start;
 }
 
 .step{
@@ -42,62 +50,84 @@ h2{
 }
 
 #newRoom, .nextBtn{
-    background-color: #04AA6D;
+    background-color: #F8B179;
     color:white;
 }
 
 #newRoom:hover, .nextBtn:hover{
-    background-color: #06e090;
+    background-color: #fbd4b6;
 }
 
 #joinRoom, .prevBtn{
-    background-color: #1a53ff;
+    background-color: #676F9D;
     color:white;    
 }
 
 #joinRoom:hover, .prevBtn:hover{
-    background-color: #4d79ff;
+    background-color: #9298b9;
 }
 
 
+.form{
+    width: 700px;
+    display: flex;
+    flex-direction: column;
+    margin: 20px auto;
+}
+
 .formContainer{
+    width: 700px;
+    display: flex;
+    flex-direction: column;
+
+    padding: 50px;
+    background-color: #2D3250;
+    border-radius: 10px;
+}
+
+
+.inputContainer{
+    width: fit-content;
     display: flex;
     flex-direction: row;
-    margin-top: 20px;
+    margin-bottom: 10px;
 }
 
 .formContainer input{
     height: auto;
+    margin-left: 10px;
 }
 
 .avatarsInput{
     display: flex;
     flex-direction: column;
+    margin-top: 20px;
 }
 
 .avatars{
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-    row-gap: 40px;
-    margin: 30px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 75px); /* Fixed width for each item */
+    row-gap: 30px;
+    column-gap: 30px;
+    justify-content: center;
+    justify-items: center;
+    margin-top: 20px;
 }
 
 .avatar, .avatarSelected{
     height:75px;
     width: 75px;
     margin-right: 10px;
-    border: 3px solid white;
+    border: 3px solid #676F9D;
     border-radius: 50px;
 }
 
 .avatarSelected{
-    border:3px solid #22495F;
+    border:3px solid #9298b9;
 }
 
 .avatar:hover{
-    border:3px solid #22495F;
+    border:3px solid #9298b9;
 }
 
 .avatar img, .avatarSelected img{

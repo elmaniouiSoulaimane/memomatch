@@ -177,8 +177,10 @@ class UserDetailsStep extends Component {
     
         return (
         <div className={styles.step}>
+          <div className={styles.form}>
             <h2>Step 3: Provide your username and choose your avatar</h2>
             <div className={styles.formContainer}> 
+              <div className={styles.inputContainer}>
                 <span>Your username:</span>
                 <input
                   type="text"
@@ -186,27 +188,28 @@ class UserDetailsStep extends Component {
                   onChange={this.validateInput}
                   value={this.state.username}
                 />
-            </div>
-            {this.state.errorMessage && <p style={{ color: 'red' }}>{this.state.errorMessage}</p>}
-    
-            
-            <div className={styles.avatarsInput}>
-                <p>Choose an avatar:</p>
-                <div className={styles.avatars}>
-                    {avatars.map((avatar) => (
-                        <div className={this.state.selectedAvatar === avatar.imageUrl ? styles.avatarSelected : styles.avatar } key={avatar.id} 
-                            onClick={() => this.handleAvatarSelect(avatar.imageUrl)}
-                            >
-                            <img src={avatar.imageUrl} alt={avatar.name} />
-                        </div>
-                    ))}
-                </div>
-            </div>
-    
-            <div className={styles.btnsContainer}>
-                <button onClick={this.previousStep} className={styles.prevBtn}>Previous</button>
-                <button onClick={this.handleClick} className={styles.nextBtn} disabled={this.state.isNextButtonDisabled}>Ready!</button>
-            </div>
+                {this.state.errorMessage && <p style={{ color: 'red' }}>{this.state.errorMessage}</p>}
+              </div>
+          
+              <div className={styles.avatarsInput}>
+                  <span>Choose an avatar:</span>
+                  <div className={styles.avatars}>
+                      {avatars.map((avatar) => (
+                          <div className={this.state.selectedAvatar === avatar.imageUrl ? styles.avatarSelected : styles.avatar } key={avatar.id} 
+                              onClick={() => this.handleAvatarSelect(avatar.imageUrl)}
+                              >
+                              <img src={avatar.imageUrl} alt={avatar.name} />
+                          </div>
+                      ))}
+                  </div>
+              </div>
+
+              <div className={styles.btnsContainer}>
+                  <button onClick={this.previousStep} className={styles.prevBtn}>Previous</button>
+                  <button onClick={this.handleClick} className={styles.nextBtn} disabled={this.state.isNextButtonDisabled}>Ready!</button>
+              </div>
+            </div>  
+          </div>
         </div>
         );
     }

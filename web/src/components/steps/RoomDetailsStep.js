@@ -134,45 +134,48 @@ class RoomDetailsStep extends Component {
   render() {
     return (
       <div className={styles.step}>
-        <h2>Step 2: Share Room name</h2>
-        <div className={styles.formContainer}> 
-          <>
-            <span>Please provide the room's name: </span>
-            <input
-              type="text"
-              ref={this.RoomNameRef}
-              onChange={this.validateInput}
-              value={this.state.roomName}
-            />
-          </>
-          {this.props.isRoomAdmin ? (
-            <>
-              <span>Please provide a password: </span>
+        <div className={styles.form}> 
+          <h2>Step 2: Share Room name</h2>
+          <div className={styles.formContainer}>
+            <div className={styles.inputContainer}>
+              <span>Please provide the room's name: </span>
               <input
                 type="text"
-                ref={this.RoomPasswordRef}
-                onChange={this.validatePassword}
-                value={this.state.roomPassword}
+                ref={this.RoomNameRef}
+                onChange={this.validateInput}
+                value={this.state.roomName}
               />
-            </>
-          ):
-          (
-            <>
-              <span>Please provide this room's password: </span>
-              <input
-                type="text"
-                ref={this.RoomPasswordRef}
-                onChange={this.validatePassword}
-                value={this.state.roomPassword}
-              />
-            </>
-          )}
-        </div>
-        {this.state.errorMessage && <p style={{ color: 'red' }}>{this.state.errorMessage}</p>}
-
-        <div className={styles.btnsContainer}>
-          <button onClick={this.previousStep} className={styles.prevBtn}>Previous</button>
-          <button onClick={this.handleClick} className={styles.nextBtn} disabled={this.state.isNextButtonDisabled}>Next</button>
+            </div>
+            {this.props.isRoomAdmin ? (
+              <div className={styles.inputContainer}>
+                <span>Please provide a password: </span>
+                <input
+                  type="text"
+                  ref={this.RoomPasswordRef}
+                  onChange={this.validatePassword}
+                  value={this.state.roomPassword}
+                />
+              </div>
+            ):
+            (
+              <>
+                <div className={styles.inputContainer}>
+                  <span>Please provide this room's password: </span>
+                  <input
+                    type="text"
+                    ref={this.RoomPasswordRef}
+                    onChange={this.validatePassword}
+                    value={this.state.roomPassword}
+                  />
+                </div>
+              </>
+            )}
+            {this.state.errorMessage && <p style={{ color: 'red' }}>{this.state.errorMessage}</p>}
+            <div className={styles.btnsContainer}>
+              <button onClick={this.previousStep} className={styles.prevBtn}>Previous</button>
+              <button onClick={this.handleClick} className={styles.nextBtn} disabled={this.state.isNextButtonDisabled}>Next</button>
+            </div>
+          </div>
         </div>
       </div>
     );
