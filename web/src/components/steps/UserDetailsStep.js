@@ -178,7 +178,7 @@ class UserDetailsStep extends Component {
         return (
         <div className={styles.step}>
           <div className={styles.form}>
-            <h2>Step 3: Provide your username and choose your avatar</h2>
+            <h2>Step 2: Provide your player details</h2>
             <div className={styles.formContainer}> 
               <div className={styles.inputContainer}>
                 <span>Your username:</span>

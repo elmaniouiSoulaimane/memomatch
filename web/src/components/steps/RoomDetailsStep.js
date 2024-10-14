@@ -135,7 +135,7 @@ class RoomDetailsStep extends Component {
     return (
       <div className={styles.step}>
         <div className={styles.form}> 
-          <h2>Step 2: Share Room name</h2>
+          <h2>Step 1: Provide room details</h2>
           <div className={styles.formContainer}>
             <div className={styles.inputContainer}>
               <span>Please provide the room's name: </span>

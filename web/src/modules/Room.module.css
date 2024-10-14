@@ -18,7 +18,7 @@
 }
 
 .tab, .activeTab{
-    background-color: #7289c0;
+    background-color: #495083;
     padding: 10px;
     width:fit-content;
     overflow: hidden;
@@ -26,10 +26,8 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    border-radius: 10px;
-    border-bottom: none;
-    margin-left: 2px;
     border: none;
+    border-radius: 10px;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
 }
@@ -56,10 +54,6 @@
     font-size: 15px;
     margin-left: 5px;
     font-family: var(--p-font-family);
-}
-
-.update span{
-    color:#22495F;
 }
 
 .leaderboard{
@@ -239,6 +233,7 @@
     text-align: center;
     width: 100vw;
     display: block;
+    margin-bottom: 40px;
 }
 
 @media (max-width: 700px) {
