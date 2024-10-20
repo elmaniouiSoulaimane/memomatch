@@ -124,8 +124,7 @@ class RoomDetailsStep extends Component {
     this.setState({
       roomName: '',
       roomPassword: '',
-      errorMessage: '',
-      isNextButtonDisabled: true
+      errorMessage: ''
     });
 
     this.props.previousStep();
