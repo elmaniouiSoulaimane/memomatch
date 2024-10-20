@@ -16,16 +16,6 @@ class RoomDetailsStep extends Component {
       isNextButtonDisabled: false,
     };
   }
-
-  // componentDidUpdate(prevProps) {
-  //   // Check if the step has just become active
-  //   if (!prevProps.isActive && this.props.isActive) {
-  //     // Focus the input element if the step is now active
-  //     if (this.RoomNameRef.current) {
-  //       this.RoomNameRef.current.focus();
-  //     }
-  //   }
-  // }
   
   validateInput = (event) => {
     const { value } = event.target;

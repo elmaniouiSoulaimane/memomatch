@@ -41,17 +41,6 @@ class UserDetailsStep extends Component {
           selectedAvatar: '',
         };
     }
-
-    // componentDidUpdate(prevProps) {
-    //   // Check if the step has just become active
-    //   if (!prevProps.isActive && this.props.isActive) {
-    //     // Focus the input element if the step is now active
-    //     if (this.mainInputRef.current) {
-    //       this.mainInputRef.current.focus();
-    //     }
-    //   }
-    // }
-  
     
     handleAvatarSelect = (avatarName) => {    
       this.setState({ 
