@@ -8,9 +8,11 @@
 .h1{
     height:15vh;
     width: 100vw;
-    text-align: center;
-    margin: 0 !important;
     color: white;
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center;    /* Centers vertically */
+    margin: 0;
 }
 
 .wizard{
@@ -34,6 +36,27 @@ span{
     height:85vh;
     width: 100vw;
     text-align: center;
+}
+
+.introduction{
+    width: 70%;
+    max-width: 700px;
+    max-height: 450px;
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+}
+
+h2{
+    color: white;
+    margin-left: 0;
+}
+
+.introduction p{
+    color: white;
+    text-align: justify;
+    line-height: 50px;
+    font-size: 15px;
 }
 
 .btnsContainer{
