@@ -1,10 +1,19 @@
 .step{
-    height: 90vh;
+    height:85vh;
+    width: 100vw;
+    text-align: center;
+}
+
+.roomTitle{
+    height:10vh;
+    width: 100vw;
+    text-align: center;
+    display: block;
 }
 
 .roomContainer{
-    height: 95%;
-    width: 100%;
+    height: 75vh;
+    width: 100vw;
     display: flex;
     flex-direction: row;
 }
@@ -12,9 +21,12 @@
 
 .mainColumnContainer{
     height: fit-content;
+    max-height: 95%;
     width: 50%;
     background-color: #F8B179;
     border-radius: 10px;
+    overflow-y: auto;
+    box-sizing: content-box;
 }
 
 .tab, .activeTab{
@@ -61,31 +73,14 @@
 }
 
 .cardsContainer {
-    height: auto; /* Better for responsiveness */
+    height: auto;
     display: grid;
-    grid-template-columns: repeat(auto-fit, 120px); /* Fixed width for each item */
+    grid-template-columns: repeat(auto-fit, 72px);
     padding: 20px;
     row-gap: 30px;
+    column-gap: 20px;
     justify-content: center;
     justify-items: center;
-}
-
-@media (max-width: 1000px) {
-    .cardsContainer {
-        grid-template-columns: repeat(4, 1fr); /* 3 cards per row */
-    }
-}
-
-@media (max-width: 768px) {
-    .cardsContainer {
-        grid-template-columns: repeat(3, 1fr); /* 3 cards per row */
-    }
-}
-
-@media (max-width: 480px) {
-    .cardsContainer {
-        grid-template-columns: repeat(2, 1fr); /* 2 cards per row */
-    }
 }
 
 .card {
@@ -160,7 +155,6 @@
 
 /* ////////////////////////// */
 .newsBroadcast, .leaderboard{
-    height: 95%;
     width: 25%;
     padding: 20px;
     overflow-y: auto;
@@ -226,14 +220,6 @@
 
 .lbtitle{
     color: #F8B179;
-}
-
-.roomTitle{
-    font-size: 20px;
-    text-align: center;
-    width: 100vw;
-    display: block;
-    margin-bottom: 40px;
 }
 
 @media (max-width: 700px) {
