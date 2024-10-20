@@ -33,12 +33,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                 await self.add_user_to_group()
                 print('Room "%s" created' % self.group_name)
                 await self.accept()
-                await self.send(text_data=json.dumps({
-                    "success": {
-                        "type": "room-created",
-                        "message": 'Room "%s" created successfully' % self.group_name
-                    }
-                }))
             else:
                 print('Room "%s" already exists' % self.group_name)
                 if in_group:
