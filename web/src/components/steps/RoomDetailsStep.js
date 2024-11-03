@@ -19,7 +19,7 @@ class RoomDetailsStep extends Component {
   
   validateInput = (event) => {
     const { value } = event.target;
-    const regex = /^[a-zA-Z0-9_-]*$/;
+    const regex = /^[a-zA-Z0-9 _-]*$/;
 
     if (regex.test(value)) {
       this.setState({
