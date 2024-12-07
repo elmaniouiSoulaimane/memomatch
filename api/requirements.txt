@@ -1,8 +1,10 @@
+aioredis==2.0.1
 asgiref==3.7.2
 async-timeout==4.0.3
 attrs==23.2.0
 autobahn==23.6.2
 Automat==22.10.0
+bcrypt==4.2.0
 cffi==1.16.0
 channels==4.0.0
 channels-redis==4.2.0
@@ -23,6 +25,7 @@ pyasn1==0.5.1
 pyasn1-modules==0.3.0
 pycparser==2.21
 pyOpenSSL==24.0.0
+python-dotenv==1.0.1
 pytz==2024.1
 redis==5.0.2
 service-identity==24.1.0

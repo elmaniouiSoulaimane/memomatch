@@ -1,11 +1,13 @@
 import json
+import os
+
 import bcrypt
 
 from time import time
-
+from dotenv import load_dotenv
 import aioredis
 from channels.generic.websocket import AsyncWebsocketConsumer
-
+load_dotenv()
 
 class GameConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
@@ -18,7 +20,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         action = self.scope['url_route']['kwargs']['action']
 
         # Initialize Redis client
-        self.redis_client = await aioredis.from_url('redis://localhost', encoding="utf-8", decode_responses=True)
+        # self.redis_client = await aioredis.from_url('redis://localhost', encoding="utf-8", decode_responses=True)
+        self.redis_client = await aioredis.from_url(os.getenv('REDIS_FULL_ENDPOINT'), encoding="utf-8", decode_responses=True)
 
         # Check if the room/group exists
         group_exists = await self.group_exists()
