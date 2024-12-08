@@ -60,9 +60,9 @@ class RoomDetailsStep extends Component {
       if (this.state.wsConnected === false) {
         let ws = null
         if (this.props.isRoomAdmin) {
-          ws = new WebSocket(process.env.REACT_APP_API_HOST + `/create/${this.state.roomName}`);
+          ws = new WebSocket(process.env.REACT_APP_HOSTED_API + `/create/${this.state.roomName}`);
         }else{
-          ws = new WebSocket(process.env.REACT_APP_API_HOST + `/join/${this.state.roomName}`);
+          ws = new WebSocket(process.env.REACT_APP_HOSTED_API + `/join/${this.state.roomName}`);
         }
 
         ws.onopen = (success) => {
@@ -78,7 +78,7 @@ class RoomDetailsStep extends Component {
         };
 
         ws.onerror = (error) => {
-          console.log("In error")
+          console.log("In error", error)
           Store.addNotification({
             title: "Error",
             message: error.message || "An unknown error occurred",
