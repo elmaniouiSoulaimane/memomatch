@@ -5,7 +5,7 @@ import bcrypt
 
 from time import time
 from dotenv import load_dotenv
-import aioredis
+import redis.asyncio as redis
 from channels.generic.websocket import AsyncWebsocketConsumer
 load_dotenv()
 
