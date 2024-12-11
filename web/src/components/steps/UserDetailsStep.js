@@ -177,7 +177,7 @@ class UserDetailsStep extends Component {
                   onChange={this.validateInput}
                   value={this.state.username}
                 />
-                {this.state.errorMessage && <p style={{ color: 'red' }}>{this.state.errorMessage}</p>}
+                {this.state.errorMessage && <p style={{ color: '#fb3e93' }}>{this.state.errorMessage}</p>}
               </div>
           
               <div className={styles.avatarsInput}>

@@ -159,7 +159,7 @@ class RoomDetailsStep extends Component {
                 </div>
               </>
             )}
-            {this.state.errorMessage && <p style={{ color: 'red' }}>{this.state.errorMessage}</p>}
+            {this.state.errorMessage && <p style={{ color: '#fb3e93' }}>{this.state.errorMessage}</p>}
             <div className={styles.btnsContainer}>
               <button onClick={this.previousStep} className={styles.prevBtn}>Previous</button>
               <button onClick={this.handleClick} className={styles.nextBtn} disabled={this.state.isNextButtonDisabled}>Next</button>
