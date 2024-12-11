@@ -2,7 +2,7 @@ import React, { Component, createRef } from 'react';
 import styles from "../modules/MemoryGame.module.css";
 import StepWizard from "react-step-wizard";
 import { Store } from 'react-notifications-component';
-import {cardFlipSound, crowdBooingSound, crowdCheeringSound, success} from "../imports"
+import {cardFlipSound, crowdBooingSound, crowdCheeringSound, success, logo} from "../imports"
 
 //STEPS
 import FirstStep from "./steps/FirstStep.js";
@@ -341,7 +341,7 @@ class Home extends Component {
 
         return (
             <div className={styles.mainContainer}>
-                <h1 className={styles.h1}>MemoryRush - Multiplayer Game</h1>
+                <img src={logo} className={styles.logo}></img>
                 <StepWizard className={styles.wizard} initialStep={this.state.currentStep} ref={this.state.stepWizardRef}>
                     <FirstStep
                         setIsRoomAdmin={this.setIsRoomAdmin}

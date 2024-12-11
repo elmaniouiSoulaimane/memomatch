@@ -38,6 +38,8 @@ import crowdBooingSound from "./media/sounds/crowd-booing.mp3";
 import crowdCheeringSound from "./media/sounds/crowd-cheering.mp3";
 import success from "./media/sounds/success.mp3";
 
+import logo from "./media/images/logo.png";
+
 export{
     App,
     Home
@@ -78,4 +80,8 @@ export {
     crowdBooingSound,
     crowdCheeringSound,
     success
+  }
+
+  export {
+    logo
   }
