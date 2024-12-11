@@ -341,7 +341,7 @@ class Home extends Component {
 
         return (
             <div className={styles.mainContainer}>
-                <h1 className={styles.h1}>Memory Game</h1>
+                <h1 className={styles.h1}>MemoryRush - Multiplayer Game</h1>
                 <StepWizard className={styles.wizard} initialStep={this.state.currentStep} ref={this.state.stepWizardRef}>
                     <FirstStep
                         setIsRoomAdmin={this.setIsRoomAdmin}
