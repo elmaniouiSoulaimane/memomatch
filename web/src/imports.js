@@ -19,15 +19,15 @@ import av13 from "./media/images/avatars/13.webp"
 
 
 //GAME CARDS
-import Bird from "./media/images/cards/Bird.webp"
+import Coffee from "./media/images/cards/Coffee.webp"
 import Crab from "./media/images/cards/Crab.webp"
 import Dragon from "./media/images/cards/Dragon.webp"
 import Friends from "./media/images/cards/Friends.webp"
-import Pharaoh from "./media/images/cards/Pharaoh.webp"
+import Guitar from "./media/images/cards/Guitar.webp"
 import Pizza from "./media/images/cards/Pizza.webp"
 import Plane from "./media/images/cards/Plane.webp"
 import Robot from "./media/images/cards/Robot.webp"
-import Sloth from "./media/images/cards/Sloth.webp"
+import Rene_Decartes from "./media/images/cards/Rene_Descartes.webp"
 import Soccer from "./media/images/cards/Soccer.webp"
 import Cards_Back from "./media/images/cards/Cards_Back.webp"
 
@@ -60,15 +60,15 @@ export{
   }
 
 export{
-    Bird,
+    Coffee,
     Crab,
     Dragon,
     Friends,
-    Pharaoh,
+    Guitar,
     Pizza,
     Plane,
     Robot,
-    Sloth,
+    Rene_Decartes,
     Soccer,
     Cards_Back
   }

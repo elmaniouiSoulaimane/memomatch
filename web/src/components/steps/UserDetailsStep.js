@@ -18,15 +18,15 @@ import {
 } from "../../imports";
 
 import {
-  Bird,
+  Coffee,
   Crab,
   Dragon,
   Friends,
-  Pharaoh,
+  Guitar,
   Pizza,
   Plane,
   Robot,
-  Sloth,
+  Rene_Decartes,
   Soccer
 } from "../../imports"
 
@@ -84,25 +84,25 @@ class UserDetailsStep extends Component {
           avatar: this.state.selectedAvatar,
           points: 0,
           cards:this.shuffleArray([
-            { name: 'Bird', imageUrl: Bird, flipped: false},
+            { name: 'Coffee', imageUrl: Coffee, flipped: false},
             { name: 'Crab', imageUrl: Crab, flipped: false},
             { name: 'Dragon', imageUrl: Dragon, flipped: false },
             { name: 'Friends', imageUrl: Friends, flipped: false },
-            { name: 'Pharaoh', imageUrl: Pharaoh, flipped: false },
+            { name: 'Guitar', imageUrl: Guitar, flipped: false },
             { name: 'Pizza', imageUrl: Pizza, flipped: false },
             { name: 'Plane', imageUrl: Plane, flipped: false },
             { name: 'Robot', imageUrl: Robot, flipped: false },
-            { name: 'Sloth', imageUrl: Sloth, flipped: false },
+            { name: 'Réne Descartes', imageUrl: Rene_Decartes, flipped: false },
             { name: 'Soccer', imageUrl: Soccer, flipped: false },
-            { name: 'Bird', imageUrl: Bird, flipped: false},
+            { name: 'Coffee', imageUrl: Coffee, flipped: false},
             { name: 'Crab', imageUrl: Crab, flipped: false},
             { name: 'Dragon', imageUrl: Dragon, flipped: false },
             { name: 'Friends', imageUrl: Friends, flipped: false },
-            { name: 'Pharaoh', imageUrl: Pharaoh, flipped: false },
+            { name: 'Guitar', imageUrl: Guitar, flipped: false },
             { name: 'Pizza', imageUrl: Pizza, flipped: false },
             { name: 'Plane', imageUrl: Plane, flipped: false },
             { name: 'Robot', imageUrl: Robot, flipped: false },
-            { name: 'Sloth', imageUrl: Sloth, flipped: false },
+            { name: 'Réne Descartes', imageUrl: Rene_Decartes, flipped: false },
             { name: 'Soccer', imageUrl: Soccer, flipped: false },
           ])
         }
