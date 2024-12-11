@@ -5,7 +5,15 @@
     width: 100vw;
 }
 
-
+/* .h1{
+    height:15vh;
+    width: 100vw;
+    color: white;
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    /*align-items: center;    /* Centers vertically */
+    /*margin: 0;
+} */
 .logo{
     height: 25vh;
     margin: 0 auto;
@@ -13,7 +21,7 @@
 
 
 .wizard{
-    height: 85vh;
+    height: 75vh;
     width: 100vw;
 }
 
@@ -30,7 +38,7 @@ span{
 }
 
 .step{
-    height:85vh;
+    height:inherit;
     width: 100vw;
     text-align: center;
 }
@@ -52,7 +60,7 @@ h2{
 .introduction p{
     color: white;
     text-align: justify;
-    line-height: 50px;
+    line-height: 30px;
     font-size: 15px;
 }
 
@@ -72,21 +80,21 @@ h2{
 }
 
 #newRoom, .nextBtn{
-    background-color: #F8B179;
+    background-color: #fb3e93;
     color:white;
 }
 
 #newRoom:hover, .nextBtn:hover{
-    background-color: #fbd4b6;
+    background-color: #fd9bc7;
 }
 
 #joinRoom, .prevBtn{
-    background-color: #676F9D;
+    background-color: #065fff;
     color:white;    
 }
 
 #joinRoom:hover, .prevBtn:hover{
-    background-color: #9298b9;
+    background-color: #80acff;
 }
 
 
@@ -109,7 +117,7 @@ h2{
     display: flex;
     flex-direction: column;
     padding: 50px;
-    background-color: #2D3250;
+    background-color: #211d49;
     border-radius: 10px;
 }
 
@@ -156,7 +164,7 @@ h2{
     height:75px;
     width: 75px;
     margin-right: 10px;
-    border: 3px solid #676F9D;
+    border: 3px solid #065fff;
     border-radius: 50px;
 }
 
@@ -167,11 +175,11 @@ h2{
 }
 
 .avatarSelected{
-    border:3px solid greenyellow;
+    border:3px solid #fb3e93;
 }
 
 .avatar:hover{
-    border:3px solid #9298b9;
+    border:3px solid #fb3e93;
 }
 
 .avatar img, .avatarSelected img{

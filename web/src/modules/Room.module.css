@@ -1,20 +1,21 @@
 .step{
-    height:85vh;
+    height:100%;
     width: 100vw;
     text-align: center;
 }
 
 .roomTitle{
-    height:10vh;
+    height:7vh;
     width: 100vw;
     display: flex;
     justify-content: center; /* Centers horizontally */
     align-items: center;    /* Centers vertically */
     margin: 0;
+    color: white;
 }
 
 .roomContainer{
-    height: 75vh;
+    height: 68vh;
     width: 100vw;
     display: flex;
     flex-direction: row;
@@ -25,16 +26,17 @@
     height: fit-content;
     max-height: 95%;
     width: 50%;
-    background-color: #F8B179;
+    background-color: #211d49;
     border-radius: 10px;
     overflow-y: auto;
     box-sizing: content-box;
 }
 
 .tab, .activeTab{
-    background-color: #495083;
+    background-color: #fc69ab;
     padding: 10px;
-    width:fit-content;
+    width:130px;
+    max-width: 150px;
     overflow: hidden;
     display: flex;
     flex-direction: row;
@@ -47,12 +49,12 @@
 }
 
 .tab:hover, .activeTab:hover{
-    background-color: #495083;
+    background-color: #fc82b9;
     cursor: pointer;
 }
 
 .activeTab{
-    background-color: #2E3251;
+    background-color: #fb3e93;
 }
 
 .tab img, .activeTab img, .update img, .playerCard img{
@@ -91,10 +93,11 @@
     max-width: 120px; /* Limit the maximum width */
     min-width: 72px; /* Limit the minimum width */
     border: none;
-    background-color: #F8B179;
+    background-color: #211d49;
     padding: 0;
     position: relative;
     transition: transform 0.3s ease;
+    border-radius: 5px;
 }
 
 .card:hover {
@@ -138,12 +141,14 @@
     height: 100%;
     position: absolute;
     backface-visibility: hidden;
+    border-radius: 5px;
 }
 
 .front img, .back img {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    border-radius: 5px;
 }
 
 .back {
@@ -174,13 +179,16 @@
     justify-content: flex-start;
     align-items: center;
     height: fit-content;
-    background-color: #676F9D;
+    background-color: #065fff;
     border-radius: 10px;
     margin-top: 20px;
 }
 
+.tabTitle{
+    color: #065fff;
+}
+
 .tabTitle, .lbtitle, .roomTitle{
-    color:#676F9D;
     font-weight: bold;
     font-size: 25px;
     font-family: var(--p-font-family);
@@ -212,7 +220,7 @@
     padding: 15px;
     width: -webkit-fill-available;
     margin: 0 0 0 10px;
-    background-color: #F8B179;
+    background-color: yellow;
 }
 
 .playerCard img{
@@ -225,7 +233,7 @@
 }
 
 .lbtitle{
-    color: #F8B179;
+    color: yellow;
 }
 
 @media (max-width: 700px) {
