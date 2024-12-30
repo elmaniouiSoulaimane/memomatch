@@ -30,7 +30,7 @@ span{
 }
 
 .step{
-    height:inherit;
+    height:75vh;
     width: 100vw;
     text-align: center;
 }
@@ -63,6 +63,12 @@ h2{
     column-gap: 50px;
 }
 
+@media (max-width: 1300px) {
+    .btnsContainer{
+        margin-top: 15px;
+    }
+}
+
 .btn, .nextBtn, .prevBtn{
     padding: 12px 30px;
     border-radius: 7px;
@@ -91,12 +97,13 @@ h2{
 
 
 .form{
+    height: 75vh;
     width: 70%;
     max-width: 700px;
-    max-height: 450px;
     display: flex;
     flex-direction: column;
     margin: auto;
+    overflow: hidden;
 }
 
 @media (max-width: 500px) {
@@ -106,9 +113,11 @@ h2{
 }
 
 .formContainer{
+    min-height: inherit;
+    max-height: 65vh;
     display: flex;
     flex-direction: column;
-    padding: 50px;
+    padding: 30px;
     background-color: #211d49;
     border-radius: 10px;
 }
@@ -158,6 +167,18 @@ h2{
     margin-right: 10px;
     border: 3px solid #065fff;
     border-radius: 50px;
+}
+
+@media (max-width: 1300px) {
+    .avatars{
+        row-gap: 15px;
+        grid-template-columns: repeat(auto-fit, 55px); /* Fixed width for each item */
+    }
+
+    .avatar, .avatarSelected{
+        height:60px;
+        width: 60px;
+    }
 }
 
 @media (max-width: 870px) {
