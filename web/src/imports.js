@@ -24,8 +24,8 @@ import Crab from "./media/images/cards/Crab.webp"
 import Dragon from "./media/images/cards/Dragon.webp"
 import Friends from "./media/images/cards/Friends.webp"
 import Guitar from "./media/images/cards/Guitar.webp"
-import Pizza from "./media/images/cards/Pizza.webp"
-import Plane from "./media/images/cards/Plane.webp"
+import Pharoah_Cat from "./media/images/cards/Pharoah_Cat.webp"
+import Fighter_Cat from "./media/images/cards/Fighter_Cat.webp"
 import Robot from "./media/images/cards/Robot.webp"
 import Rene_Decartes from "./media/images/cards/Rene_Descartes.webp"
 import Soccer from "./media/images/cards/Soccer.webp"
@@ -69,8 +69,8 @@ export{
     Dragon,
     Friends,
     Guitar,
-    Pizza,
-    Plane,
+    Pharoah_Cat,
+    Fighter_Cat,
     Robot,
     Rene_Decartes,
     Soccer,
