@@ -2,7 +2,8 @@ import React, { Component, createRef } from 'react';
 import styles from "../modules/MemoryGame.module.css";
 import StepWizard from "react-step-wizard";
 import { Store } from 'react-notifications-component';
-import {cardFlipSound, crowdBooingSound, crowdCheeringSound, success, logo} from "../imports"
+import {cardFlipSound, crowdBooingSound, crowdCheeringSound, success, logo, you_lost_img, winner_img} from "../imports"
+import Popup from './Popup.js';
 
 //STEPS
 import FirstStep from "./steps/FirstStep.js";
@@ -34,7 +35,10 @@ class Home extends Component {
             success,
             crowdBooingSound,
             crowdCheeringSound
-        ]
+        ],
+        showPopup: false,
+        popupImg: null,
+        mainPlayerAvatar: "",
       };
     }
 
@@ -298,12 +302,16 @@ class Home extends Component {
 
             if (player.user_name !== mainPlayer.user_name){
                 updatedPlayers = players.map(item => (item.user_name === player.user_name ? { ...item, ...player } : item));
+                this.setState({ showPopup: true, popupImg: you_lost_img, mainPlayerAvatar: mainPlayer.avatar })
                 this.playSound(2)
                 return {
                     players: updatedPlayers,
                     gameCompleted: true,
                     news: [...news, { "update": update, "player": player }]
                 }
+            }else{
+                this.setState({ showPopup: true, popupImg: winner_img, mainPlayerAvatar: mainPlayer.avatar })
+                this.playSound(3)
             }
             return {
                 players: updatedPlayers,
@@ -335,6 +343,12 @@ class Home extends Component {
             isRoomAdmin: result
         })
     }
+
+    togglePopup = () => {
+        this.setState((prevState) => ({
+          showPopup: !prevState.showPopup,
+        }));
+    };
 
     render() {
         const {audioRefs, audios} = this.state
@@ -371,6 +385,12 @@ class Home extends Component {
                         <audio key={index} ref={ref} src={audios[index]} />
                     ))}
                 </>
+                <Popup show={this.state.showPopup} onClose={this.togglePopup}>
+                    <div style={styles.imageContainer}>
+                        <img src={this.state.popupImg} className={styles.popupImage} alt="Popup Background"></img>
+                        <img src={this.state.mainPlayerAvatar} className={styles.popupAvatar}></img>
+                    </div>
+                </Popup>
             </div>
         );
     }

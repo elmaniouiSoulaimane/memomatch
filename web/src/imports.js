@@ -39,6 +39,8 @@ import crowdCheeringSound from "./media/sounds/crowd-cheering.mp3";
 import success from "./media/sounds/success.mp3";
 
 import logo from "./media/images/logo.png";
+import you_lost_img from "./media/images/you_lose.webp";
+import winner_img from "./media/images/winner.webp";
 
 export{
     App,
@@ -83,5 +85,7 @@ export {
   }
 
   export {
-    logo
+    logo,
+    you_lost_img,
+    winner_img
   }

@@ -71,7 +71,6 @@ class Tabs extends Component {
     }
 
     if (this.allCardsFlipped(players)) {
-      this.playSound(3)
       let ws_event = "player-won"
       let ws_update = "Player " + players[this.state.activePlayerIndex].user_name + " won"
       let ws_player = players[this.state.activePlayerIndex]
@@ -173,8 +172,6 @@ class Tabs extends Component {
 
     return current_player.cards.every((card) => card.flipped === true);
   }
-
-  
 
   render(){
     const {players, mainPlayer} = this.props
