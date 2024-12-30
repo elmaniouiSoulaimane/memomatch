@@ -24,7 +24,7 @@ class FirstStep extends React.Component {
       <div className={styles.step}>
         <div className={styles.introduction}>
           <h2>About This Project:</h2>
-          <p>Welcome to the MemoryRush! This project was built to showcase the power of real-time communication using WebSockets. Unlike traditional HTTP requests that require constant refreshing, WebSockets allow for instant, two-way interaction between the server and the browser. The goal of this game is not just to entertain, but to demonstrate how modern web applications can provide a smooth, dynamic user experience with live updates. The backend is powered by Django and Python, while the frontend is built with React, all working together to create a fast and responsive game environment.</p>
+          <p>Welcome to the MemoryRush! This project was built to showcase the power of real-time communication using WebSockets. Unlike traditional HTTP requests that require constant refreshing, WebSockets allow for instant, two-way interaction between the client and the server. The goal of this game is not just to entertain, but to demonstrate how modern web applications can provide a smooth, dynamic user experience with live updates. The backend is powered by Python(Django), while the frontend is built with React.js, all working together to create a fast and responsive game environment.</p>
           <div className={styles.btnsContainer}>
             <button className={styles.btn} onClick={this.handleCreateRoom} id={styles.newRoom}>Create a Room</button>
             <button className={styles.btn} onClick={this.handleJoinRoom} id={styles.joinRoom}>Join a Room</button>
