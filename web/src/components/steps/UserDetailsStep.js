@@ -37,92 +37,98 @@ class UserDetailsStep extends Component {
         this.state = {
           username: '',
           errorMessage: '',
-          isNextButtonDisabled: true,
           selectedAvatar: '',
         };
     }
     
-    handleAvatarSelect = (avatarName) => {    
+    handleAvatarSelect = (avatarName) => {   
+      if(avatarName === this.state.selectedAvatar) {
+        this.setState({ 
+          selectedAvatar: '',
+        });
+        return
+      }
+
       this.setState({ 
         selectedAvatar: avatarName,
-      }, () => {
-        this.setState({
-          isNextButtonDisabled: !this.state.selectedAvatar || !this.state.username ? true : false
-        });
       });
     }
     
     validateInput = (event) => {
       const { value } = event.target;
-      const regex = /^[a-zA-Z0-9 _-]*$/;
-    
-      if (regex.test(value)) {
-        this.setState({
-          username: value,
-          errorMessage: '',
-        }, () => {
-          this.setState({
-            isNextButtonDisabled: !this.state.selectedAvatar || !this.state.username ? true : false
-          });
-        });
-    
-      } else {
-    
-        this.setState({
-          errorMessage: 'Only normal characters, numbers, underscores(_) and dashes(-) are allowed!',
-          isNextButtonDisabled: true
-        });
-      }
+
+      this.setState({
+        username: value,
+      });
     };
 
     handleClick = () => {
-      
-      if (this.props.ws && this.state.selectedAvatar !== '' && this.state.username !== '') {
-                
-        let current_player = {
-          user_name: this.state.username,
-          avatar: this.state.selectedAvatar,
-          points: 0,
-          cards:this.shuffleArray([
-            { name: 'Coffee', imageUrl: Coffee, flipped: false},
-            { name: 'Crab', imageUrl: Crab, flipped: false},
-            { name: 'Dragon', imageUrl: Dragon, flipped: false },
-            { name: 'Friends', imageUrl: Friends, flipped: false },
-            { name: 'Guitar', imageUrl: Guitar, flipped: false },
-            { name: 'Pharoah Cat', imageUrl: Pharoah_Cat, flipped: false },
-            { name: 'Fighter Cat', imageUrl: Fighter_Cat, flipped: false },
-            { name: 'Robot', imageUrl: Robot, flipped: false },
-            { name: 'Réne Descartes', imageUrl: Rene_Decartes, flipped: false },
-            { name: 'Soccer', imageUrl: Soccer, flipped: false },
-            { name: 'Coffee', imageUrl: Coffee, flipped: false},
-            { name: 'Crab', imageUrl: Crab, flipped: false},
-            { name: 'Dragon', imageUrl: Dragon, flipped: false },
-            { name: 'Friends', imageUrl: Friends, flipped: false },
-            { name: 'Guitar', imageUrl: Guitar, flipped: false },
-            { name: 'Pharoah Cat', imageUrl: Pharoah_Cat, flipped: false },
-            { name: 'Fighter Cat', imageUrl: Fighter_Cat, flipped: false },
-            { name: 'Robot', imageUrl: Robot, flipped: false },
-            { name: 'Réne Descartes', imageUrl: Rene_Decartes, flipped: false },
-            { name: 'Soccer', imageUrl: Soccer, flipped: false },
-          ])
-        }
+      if(this.state.username === '' && this.state.selectedAvatar === '') {
+        this.setState({ errorMessage: 'Please select an avatar and enter a username' });
+        return
+      }else if(this.state.username === '') {
+        this.setState({ errorMessage: 'Please enter a username' });
+        return
+      }else if(this.state.selectedAvatar === '') {
+        this.setState({ errorMessage: 'Please select an avatar' });
+        return
+      }
 
-        let update = "Player " + current_player.user_name + " has joined the room."
+      if(this.state.username.length < 4) {
+        this.setState({ errorMessage: 'Username must be at least 4 characters long' });
+        return
+      }
 
-        this.props.setMainPlayer(current_player);
-        try {
-          this.props.ws.send(
-            JSON.stringify(
-              { 
-                "event":"player-joined", 
-                "update":update, 
-                "player": current_player
-              }
-            )
-          );
-        } catch(err) {
-          console.log(err)
-        }
+      const regex = /^[a-zA-Z0-9 _-]*$/;
+
+      if(!regex.test(this.state.username)) {
+        this.setState({ errorMessage: 'Only normal characters, numbers, underscores(_) and dashes(-) are allowed!' });
+        return
+      }
+
+      let current_player = {
+        user_name: this.state.username,
+        avatar: this.state.selectedAvatar,
+        points: 0,
+        cards:this.shuffleArray([
+          { name: 'Coffee', imageUrl: Coffee, flipped: false},
+          { name: 'Crab', imageUrl: Crab, flipped: false},
+          { name: 'Dragon', imageUrl: Dragon, flipped: false },
+          { name: 'Friends', imageUrl: Friends, flipped: false },
+          { name: 'Guitar', imageUrl: Guitar, flipped: false },
+          { name: 'Pharoah Cat', imageUrl: Pharoah_Cat, flipped: false },
+          { name: 'Fighter Cat', imageUrl: Fighter_Cat, flipped: false },
+          { name: 'Robot', imageUrl: Robot, flipped: false },
+          { name: 'Réne Descartes', imageUrl: Rene_Decartes, flipped: false },
+          { name: 'Soccer', imageUrl: Soccer, flipped: false },
+          { name: 'Coffee', imageUrl: Coffee, flipped: false},
+          { name: 'Crab', imageUrl: Crab, flipped: false},
+          { name: 'Dragon', imageUrl: Dragon, flipped: false },
+          { name: 'Friends', imageUrl: Friends, flipped: false },
+          { name: 'Guitar', imageUrl: Guitar, flipped: false },
+          { name: 'Pharoah Cat', imageUrl: Pharoah_Cat, flipped: false },
+          { name: 'Fighter Cat', imageUrl: Fighter_Cat, flipped: false },
+          { name: 'Robot', imageUrl: Robot, flipped: false },
+          { name: 'Réne Descartes', imageUrl: Rene_Decartes, flipped: false },
+          { name: 'Soccer', imageUrl: Soccer, flipped: false },
+        ])
+      }
+
+      let update = "Player " + current_player.user_name + " has joined the room."
+
+      this.props.setMainPlayer(current_player);
+      try {
+        this.props.ws.send(
+          JSON.stringify(
+            { 
+              "event":"player-joined", 
+              "update":update, 
+              "player": current_player
+            }
+          )
+        );
+      } catch(err) {
+        console.log(err)
       }
     }
 
@@ -131,8 +137,7 @@ class UserDetailsStep extends Component {
       this.setState({
         username: '',
         selectedAvatar: '',
-        errorMessage: '',
-        isNextButtonDisabled: true
+        errorMessage: ''
       });
   
       this.props.previousStep();
@@ -177,7 +182,6 @@ class UserDetailsStep extends Component {
                   onChange={this.validateInput}
                   value={this.state.username}
                 />
-                {this.state.errorMessage && <p style={{ color: '#fb3e93' }}>{this.state.errorMessage}</p>}
               </div>
           
               <div className={styles.avatarsInput}>
@@ -193,9 +197,11 @@ class UserDetailsStep extends Component {
                   </div>
               </div>
 
+              {this.state.errorMessage && <p style={{ color: '#fb3e93' }}>{this.state.errorMessage}</p>}
+
               <div className={styles.btnsContainer}>
                   <button onClick={this.previousStep} className={styles.prevBtn}>Previous</button>
-                  <button onClick={this.handleClick} className={styles.nextBtn} disabled={this.state.isNextButtonDisabled}>Ready!</button>
+                  <button onClick={this.handleClick} className={styles.nextBtn}>Ready!</button>
               </div>
             </div>  
           </div>
