@@ -21,7 +21,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
         # Initialize Redis client
         # self.redis_client = await aioredis.from_url('redis://localhost', encoding="utf-8", decode_responses=True)
-        self.redis_client = await redis.from_url(os.getenv('MEMOMATCH_REDIS_CLOUD_ENDPOINT'), encoding="utf-8", decode_responses=True)
+        self.redis_client = await redis.from_url(os.getenv('LOCAL_REDIS'), encoding="utf-8", decode_responses=True)
 
         # Check if the room/group exists
         group_exists = await self.group_exists()
