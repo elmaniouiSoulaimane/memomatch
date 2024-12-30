@@ -54,7 +54,7 @@ class UserDetailsStep extends Component {
       });
     }
     
-    validateInput = (event) => {
+    assignInput = (event) => {
       const { value } = event.target;
 
       this.setState({
@@ -179,7 +179,7 @@ class UserDetailsStep extends Component {
                 <input
                   type="text"
                   ref={this.mainInputRef}
-                  onChange={this.validateInput}
+                  onChange={this.assignInput}
                   value={this.state.username}
                 />
               </div>
