@@ -1,1 +1,4 @@
 .env*
+src/__pycache__
+memo/__pycache__
+memo/consumers/__pycache__
