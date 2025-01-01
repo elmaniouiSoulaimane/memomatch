@@ -22,15 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-^y*vs6=wgva5f!)$#m9yk=^m-gzkd1wt4r1657^4a4l_-k-nbu'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1'
-]
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
 
 
 # Application definition
@@ -86,8 +83,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            # "hosts": [("127.0.0.1", 6379)],
-            "hosts": [(os.getenv('LOCAL_REDIS'))],
+            "hosts": [(os.getenv('REDIS_HOST'))],
         },
     },
 }

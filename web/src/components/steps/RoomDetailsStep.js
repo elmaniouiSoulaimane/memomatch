@@ -60,9 +60,9 @@ class RoomDetailsStep extends Component {
       if (this.state.wsConnected === false) {
         let ws = null
         if (this.props.isRoomAdmin) {
-          ws = new WebSocket(process.env.REACT_APP_LOCAL_API + `/create/${this.state.roomName}`);
+          ws = new WebSocket(process.env.REACT_APP_API + `/create/${this.state.roomName}`);
         }else{
-          ws = new WebSocket(process.env.REACT_APP_LOCAL_API + `/join/${this.state.roomName}`);
+          ws = new WebSocket(process.env.REACT_APP_API + `/join/${this.state.roomName}`);
         }
 
         ws.onopen = (success) => {
