@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'memo.apps.MemoConfig',
+    'websocket_app.apps.WebsocketAppConfig',
 ]
 ASGI_APPLICATION = 'src.asgi.application'
 
