@@ -5,7 +5,10 @@ WORKDIR /app
 COPY . /app
 
 # Install important dependencies
-RUN apk update && apk add --no-cache build-base && pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+RUN apk update && \
+    apk add --no-cache build-base && \
+    pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Clean up
 RUN rm -rf /var/cache/apk/*

@@ -8,8 +8,6 @@ services:
       - "8080:80"
     volumes:
       - ./web/:/app/web/
-    env_file:
-      - ./web/.env.prod
     depends_on:
       - django
     networks:
@@ -21,12 +19,12 @@ services:
     build:
       context: ./api/
       dockerfile: Dockerfile
-    # ports:
-    #  - "8000:8000"
+    ports:
+     - "8000:8000"
     volumes:
       - ./api/:/app/api/
     env_file:
-      - ./api/.env.prod  # Load environment variables from the .env.prod file
+      - ./api/.env.prod # Load environment variables from the .env.prod file
     depends_on:
       - redis # Ensure Redis starts before the Django service
     networks:

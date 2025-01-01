@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . /app
 
-RUN npm install && npm run build
+RUN npm install && NODE_ENV=production npm run build
 
 FROM nginx:stable-alpine
 
